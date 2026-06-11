@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useGlobalState } from '../context/GlobalState';
 import { Activity, Clock, Box, TrendingUp, IndianRupee, CheckCircle, AlertTriangle, Shield, Play } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import PromptModal from '../components/PromptModal';
 import './Dashboard.css';
 
@@ -14,6 +15,27 @@ export default function Dashboard() {
   
   const totalRevenue = invoices.reduce((sum, i) => sum + (i.amountPaid || 0), 0);
   const totalPending = invoices.reduce((sum, i) => sum + (i.amount - (i.amountPaid || 0)), 0);
+
+  // Financial Chart Data (Revenue by Month)
+  const chartData = useMemo(() => {
+    const monthlyData = {};
+    invoices.forEach(inv => {
+      if (inv.date) {
+        const date = new Date(inv.date);
+        const monthYear = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+        if (!monthlyData[monthYear]) monthlyData[monthYear] = 0;
+        monthlyData[monthYear] += (inv.amountPaid || 0);
+      }
+    });
+
+    const data = Object.keys(monthlyData).map(month => ({
+      name: month,
+      Revenue: monthlyData[month]
+    }));
+    
+    // Sort chronologically if needed, but for simplicity assuming sorted order or it's fine.
+    return data.length > 0 ? data : [{ name: 'No Data', Revenue: 0 }];
+  }, [invoices]);
 
   // My Tasks logic
   const myJobs = useMemo(() => {
@@ -116,17 +138,35 @@ export default function Dashboard() {
             {/* Financial Overview Chart */}
             <div className="glass-panel" style={{ padding: '2rem' }}>
               <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <TrendingUp size={20} className="text-gradient" /> Financial Cash Flow (Mock)
+                <TrendingUp size={20} className="text-gradient" /> Financial Cash Flow (Live)
               </h3>
-              <div className="chart-visual" style={{ height: '250px' }}>
-                <div className="bar b1" style={{ background: 'linear-gradient(to top, rgba(74, 222, 128, 0.2), #4ADE80)' }} title="Jan"></div>
-                <div className="bar b2" style={{ background: 'linear-gradient(to top, rgba(74, 222, 128, 0.2), #4ADE80)' }} title="Feb"></div>
-                <div className="bar b3" style={{ background: 'linear-gradient(to top, rgba(74, 222, 128, 0.2), #4ADE80)' }} title="Mar"></div>
-                <div className="bar b4" style={{ background: 'linear-gradient(to top, rgba(74, 222, 128, 0.2), #4ADE80)' }} title="Apr"></div>
-                <div className="bar b5" style={{ background: 'linear-gradient(to top, rgba(74, 222, 128, 0.2), #4ADE80)' }} title="May"></div>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem', color: 'var(--text-muted)', fontSize: '12px', fontWeight: 'bold' }}>
-                <span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span>
+              <div style={{ height: '280px', width: '100%', marginTop: '1rem' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
+                    <XAxis 
+                      dataKey="name" 
+                      stroke="rgba(255,255,255,0.5)" 
+                      tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} 
+                      axisLine={false} 
+                      tickLine={false}
+                    />
+                    <YAxis 
+                      stroke="rgba(255,255,255,0.5)" 
+                      tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} 
+                      axisLine={false} 
+                      tickLine={false}
+                      tickFormatter={(value) => `₹${(value / 1000)}k`}
+                    />
+                    <Tooltip 
+                      cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                      contentStyle={{ background: '#1e1e1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff' }}
+                      itemStyle={{ color: '#4ADE80', fontWeight: 'bold' }}
+                      formatter={(value) => [`₹${value.toLocaleString('en-IN')}`, 'Revenue']}
+                    />
+                    <Bar dataKey="Revenue" fill="#4ADE80" radius={[4, 4, 0, 0]} maxBarSize={50} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
 
