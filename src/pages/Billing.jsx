@@ -200,9 +200,9 @@ export default function Billing() {
                     <td className="font-bold text-gradient">{inv.id}</td>
                     <td className="font-bold">{inv.client}</td>
                     <td>{inv.date}</td>
-                    <td className="font-bold">₹{inv.amount.toLocaleString('en-IN')}</td>
+                    <td className="font-bold">₹{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                     <td className="font-bold" style={{ color: (inv.amount - (inv.amountPaid || 0)) > 0 ? '#ffcb05' : '#4ADE80' }}>
-                      ₹{(inv.amount - (inv.amountPaid || 0)).toLocaleString('en-IN')}
+                      ₹{(inv.amount - (inv.amountPaid || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
                     <td>{getStatusBadge(inv.status)}</td>
                     <td>

@@ -72,7 +72,8 @@ export default function SalesOrderEntry() {
   };
 
   const calculateTotal = () => {
-    return items.reduce((sum, item) => sum + item.amount, 0).toFixed(2);
+    const total = items.reduce((sum, item) => sum + item.amount, 0);
+    return total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
   };
 
   const handleAIScanClick = () => {
@@ -129,7 +130,7 @@ export default function SalesOrderEntry() {
     setSalesRep('');
     setItems([{ id: Date.now(), category: '', productName: '', qty: 1, rate: 0, amount: 0 }]);
 
-    openConfirm(`✅ Sales Order submitted for ₹${Number(calculateTotal()).toLocaleString('en-IN')}! Invoice, Production Jobs & Artwork tasks auto-generated.`, () => {});
+    openConfirm(`✅ Sales Order submitted for ₹${calculateTotal()}! Invoice, Production Jobs & Artwork tasks auto-generated.`, () => {});
   };
 
   if (loading || !masters) {
@@ -357,7 +358,7 @@ export default function SalesOrderEntry() {
                         onChange={(e) => updateItem(item.id, 'rate', e.target.value)}
                       />
                     </td>
-                    <td className="font-bold text-gradient">₹{item.amount.toFixed(2)}</td>
+                    <td className="font-bold text-gradient">₹{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                     <td>
                       <button className="icon-btn-danger" onClick={() => removeItem(item.id)}>
                         <Trash2 size={16} />
