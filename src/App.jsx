@@ -325,8 +325,8 @@ function AppContent({ theme, setTheme }) {
           <Route path="/notes" element={<ProtectedRoute><QuickNotes /></ProtectedRoute>} />
         </Routes>
       </main>
-      {currentUser && <AIAssistant />}
-      {currentUser && <CommandPalette />}
+      {currentUser && !isFullscreenPage && <AIAssistant />}
+      {currentUser && !isFullscreenPage && <CommandPalette />}
     </div>
   );
 }
