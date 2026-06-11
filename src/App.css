@@ -103,7 +103,7 @@
 .nav-dropdown-wrapper:focus-within .nav-dropdown-panel {
   opacity: 1;
   pointer-events: all;
-  transform: translateY(0) scale(1);
+  transform: translateX(-50%) translateY(0) scale(1);
 }
 
 .nav-dropdown-wrapper:hover .chevron,
