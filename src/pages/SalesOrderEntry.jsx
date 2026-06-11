@@ -75,6 +75,15 @@ export default function SalesOrderEntry() {
     return total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
   };
 
+  // Estimated profit margin (35% industry average for print/packaging)
+  const MARGIN_RATE = 0.35;
+  const calculateMargin = () => {
+    const total = items.reduce((sum, item) => sum + item.amount, 0);
+    return (total * MARGIN_RATE).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+  };
+  const totalRaw = items.reduce((sum, item) => sum + item.amount, 0);
+  const marginPercent = totalRaw > 0 ? Math.round(MARGIN_RATE * 100) : 0;
+
   const handleAIScanClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -376,6 +385,18 @@ export default function SalesOrderEntry() {
             <span className="text-muted">Total Amount:</span>
             <span className="text-2xl font-bold text-gradient">{globalConfig.currency}{calculateTotal()}</span>
           </div>
+          {totalRaw > 0 && (
+            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+              <div style={{ textAlign: 'right', background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.2)', borderRadius: '8px', padding: '8px 16px' }}>
+                <p style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>Est. Profit Margin ({marginPercent}%)</p>
+                <p style={{ color: '#4ADE80', fontWeight: 700, fontSize: '18px', margin: '2px 0 0' }}>{globalConfig.currency}{calculateMargin()}</p>
+              </div>
+              <div style={{ textAlign: 'right', background: 'rgba(167,139,250,0.07)', border: '1px solid rgba(167,139,250,0.2)', borderRadius: '8px', padding: '8px 16px' }}>
+                <p style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>Approx. Cost of Goods</p>
+                <p style={{ color: '#a78bfa', fontWeight: 700, fontSize: '18px', margin: '2px 0 0' }}>{globalConfig.currency}{(totalRaw * (1 - MARGIN_RATE)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       

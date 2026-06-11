@@ -10,6 +10,7 @@ export default function Billing() {
   const [search, setSearch] = useState('');
   const [selectedInvoices, setSelectedInvoices] = useState(new Set());
   const [printData, setPrintData] = useState([]);
+  const [invoiceTheme, setInvoiceTheme] = useState('modern');
 
   // Modal State
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: 'prompt', title: '', defaultValue: '', onConfirm: null });
@@ -123,6 +124,16 @@ export default function Billing() {
             <p className="text-muted">Manage invoices, payments, and print challans.</p>
           </div>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <select
+              value={invoiceTheme}
+              onChange={e => setInvoiceTheme(e.target.value)}
+              title="Invoice Template Theme"
+              style={{ padding: '6px 12px', borderRadius: '8px', fontSize: '13px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', width: 'auto' }}
+            >
+              <option value="modern">🎨 Modern Theme</option>
+              <option value="classic">📜 Classic Theme</option>
+              <option value="minimal">⬜ Minimal Theme</option>
+            </select>
             {selectedInvoices.size > 0 && (
               <>
                 <button className="btn-secondary flex-center gap-2" onClick={() => handleDownload(Array.from(selectedInvoices))}>
@@ -243,7 +254,7 @@ export default function Billing() {
         onClose={closeModal}
       />
 
-      <PrintInvoice invoices={printData} />
+      <PrintInvoice invoices={printData} theme={invoiceTheme} />
     </div>
   );
 }

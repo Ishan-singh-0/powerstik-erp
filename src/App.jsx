@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { GlobalProvider, useGlobalState } from './context/GlobalState';
-import { Moon, Sun, ArrowRight, Menu, X } from 'lucide-react';
+import { Moon, Sun, ArrowRight, Menu, X, Search } from 'lucide-react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import SalesOrderEntry from './pages/SalesOrderEntry';
@@ -15,6 +15,7 @@ import Admin from './pages/Admin';
 import Welcome from './pages/Welcome';
 import ButtermaxCursor from './components/ButtermaxCursor';
 import AIAssistant from './components/AIAssistant';
+import CommandPalette from './components/CommandPalette';
 import './App.css';
 
 function App() {
@@ -94,6 +95,17 @@ function AppContent({ theme, toggleTheme }) {
             <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle Theme">
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
+            <button
+              onClick={() => {
+                // Dispatch a synthetic Ctrl+K to open the command palette
+                document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
+              }}
+              className="btn-secondary"
+              title="Open Command Palette"
+              style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <Search size={14} /> <kbd style={{ fontSize: '11px', opacity: 0.7 }}>Ctrl K</kbd>
+            </button>
           </div>
         </nav>
       )}
@@ -114,6 +126,7 @@ function AppContent({ theme, toggleTheme }) {
         </Routes>
       </main>
       {currentUser && <AIAssistant />}
+      {currentUser && <CommandPalette />}
     </div>
   );
 }
