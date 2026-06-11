@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════
-   LOGIN PAGE — Noir Black + Crimson Blaze
-   EndlessTools inspired minimal login
+   LOGIN PAGE — Premium SaaS
+   Linear / Vercel inspired minimal login
    ═══════════════════════════════════════════════════════ */
 
 .login-container {
@@ -10,140 +10,117 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  background: #1B1716;
+  background: #090A0F;
   overflow: hidden;
 }
 
-/* Radial glow background — MotionSites inspired */
+/* Subtle vignette glow - NOT gaming */
 .login-container::before {
   content: '';
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 700px;
-  height: 700px;
-  background: radial-gradient(circle,
-    rgba(129, 1, 0, 0.18) 0%,
-    rgba(99, 1, 2, 0.1) 30%,
-    transparent 70%
-  );
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 40%,
+      rgba(24, 35, 80, 0.18) 0%,
+      transparent 65%
+    );
   pointer-events: none;
   z-index: 0;
-  animation: loginGlow 6s ease-in-out infinite alternate;
 }
 
 .login-container::after {
   content: '';
   position: fixed;
-  bottom: 10%;
-  right: 15%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle,
-    rgba(24, 35, 80, 0.2) 0%,
-    transparent 65%
-  );
+  bottom: 0; left: 0; right: 0;
+  height: 300px;
+  background: linear-gradient(to top, rgba(185, 145, 94, 0.04) 0%, transparent 100%);
   pointer-events: none;
   z-index: 0;
-}
-
-@keyframes loginGlow {
-  from { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-  to   { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
 }
 
 /* Back link */
 .back-link {
   position: absolute;
-  top: 2rem;
-  left: 2rem;
+  top: 1.75rem;
+  left: 1.75rem;
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: rgba(237, 235, 222, 0.45);
+  gap: 6px;
+  color: rgba(237, 235, 222, 0.35);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.78rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   transition: color 0.2s ease;
   z-index: 10;
 }
 
 .back-link:hover {
-  color: #EDEBDE;
+  color: rgba(237, 235, 222, 0.7);
 }
 
-/* Login Card */
+/* Card */
 .login-card {
   width: 100%;
-  max-width: 400px;
-  padding: 2.75rem 2.5rem;
-  background: rgba(34, 29, 26, 0.85);
-  border: 1px solid rgba(237, 235, 222, 0.09);
-  border-radius: 20px;
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  max-width: 380px;
+  padding: 2.5rem 2.25rem;
+  background: rgba(14, 15, 21, 0.9);
+  border: 1px solid rgba(237, 235, 222, 0.08);
+  border-radius: 18px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   box-shadow:
-    0 0 0 1px rgba(193, 18, 31, 0.1) inset,
-    0 1px 0 rgba(237, 235, 222, 0.08) inset,
-    0 32px 64px rgba(0, 0, 0, 0.6),
-    0 8px 24px rgba(129, 1, 0, 0.15);
-  transition: transform 0.12s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              box-shadow 0.12s ease;
+    0 0 0 1px rgba(237, 235, 222, 0.04) inset,
+    0 1px 0 rgba(237, 235, 222, 0.06) inset,
+    0 24px 64px rgba(0, 0, 0, 0.6),
+    0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.12s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   transform-style: preserve-3d;
   position: relative;
   z-index: 1;
-  animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: loginReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes revealUp {
-  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+@keyframes loginReveal {
+  from { opacity: 0; transform: translateY(16px) scale(0.99); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Shimmer top line */
+/* Subtle top shimmer — gold, not red */
 .login-card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 15%;
-  right: 15%;
+  top: 0; left: 20%; right: 20%;
   height: 1px;
-  background: linear-gradient(90deg,
-    transparent,
-    rgba(193, 18, 31, 0.5),
-    rgba(232, 197, 129, 0.4),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(185,145,94,0.4), transparent);
   border-radius: 100px;
   pointer-events: none;
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 2.25rem;
-  transform: translateZ(20px);
+  margin-bottom: 2rem;
+  transform: translateZ(15px);
 }
 
 .login-title {
-  font-size: 1.9rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #FEFAEF;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: #EDEBDE;
   margin-top: 0.75rem;
-  line-height: 1.15;
+  line-height: 1.2;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
-  transform: translateZ(15px);
+  gap: 0.9rem;
+  transform: translateZ(10px);
 }
 
-/* Input groups */
+/* Inputs */
 .buttermax-input-group {
   position: relative;
   display: flex;
@@ -152,51 +129,49 @@
 
 .buttermax-input-group .input-icon {
   position: absolute;
-  left: 14px;
-  color: rgba(237, 235, 222, 0.3);
-  transition: color 0.25s ease;
+  left: 13px;
+  color: rgba(237, 235, 222, 0.25);
+  transition: color 0.2s ease;
   z-index: 1;
+  pointer-events: none;
 }
 
 .buttermax-input-group input {
   width: 100%;
-  background: rgba(237, 235, 222, 0.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(237, 235, 222, 0.1);
-  padding: 14px 16px 14px 44px;
-  border-radius: 12px;
-  color: #FEFAEF;
-  font-size: 0.95rem;
-  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  padding: 12px 14px 12px 40px;
+  border-radius: 10px;
+  color: #EDEBDE;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
   outline: none;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-  box-shadow: none;
 }
 
 .buttermax-input-group input::placeholder {
-  color: rgba(237, 235, 222, 0.3);
+  color: rgba(237, 235, 222, 0.25);
 }
 
 .buttermax-input-group input:focus {
-  background: rgba(237, 235, 222, 0.06);
-  border-color: rgba(193, 18, 31, 0.6);
-  box-shadow: 0 0 0 3px rgba(193, 18, 31, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(185, 145, 94, 0.5);
+  box-shadow: 0 0 0 3px rgba(185, 145, 94, 0.1);
 }
 
-.buttermax-input-group input:focus ~ .input-icon,
 .buttermax-input-group:focus-within .input-icon {
-  color: #C1121F;
+  color: rgba(185, 145, 94, 0.7);
 }
 
 .input-border {
   position: absolute;
-  bottom: 0;
-  left: 12px;
-  right: 12px;
-  height: 2px;
+  bottom: -1px;
+  left: 12px; right: 12px;
+  height: 1px;
   width: 0;
-  background: linear-gradient(90deg, #810100, #C1121F);
+  background: linear-gradient(90deg, #B9915E, #E8C581);
   transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 2px;
+  border-radius: 1px;
 }
 
 .buttermax-input-group input:focus + .input-border {
@@ -205,30 +180,33 @@
 
 /* Login Button */
 .buttermax-login-btn {
-  margin-top: 0.75rem;
+  margin-top: 0.5rem;
   width: 100%;
-  padding: 15px;
-  background: #FEFAEF;
-  color: #1B1716;
+  padding: 13px;
+  background: #EDEBDE;
+  color: #090A0F;
   border: none;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   cursor: pointer;
+  font-family: 'Inter', sans-serif;
   transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
-  font-family: 'Space Grotesk', 'Inter', sans-serif;
-  transform: translateZ(30px);
+  transform: translateZ(20px);
 }
 
 .buttermax-login-btn:hover:not(:disabled) {
-  background: white;
-  box-shadow: 0 0 0 3px rgba(193, 18, 31, 0.25), 0 8px 24px rgba(193, 18, 31, 0.2);
-  transform: translateZ(30px) translateY(-1px);
+  background: #FEFAEF;
+  box-shadow: 0 0 0 3px rgba(185, 145, 94, 0.2), 0 4px 16px rgba(0,0,0,0.3);
+  transform: translateZ(20px) translateY(-1px);
+}
+
+.buttermax-login-btn:active:not(:disabled) {
+  transform: translateZ(20px) translateY(0);
 }
 
 .buttermax-login-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
