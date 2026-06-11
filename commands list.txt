@@ -1,0 +1,90 @@
+PowerStik AI Assistant - Complete Commands List
+===============================================
+
+Below is the list of currently configured quick commands, along with 50 additional commands you can use or adapt with the PowerStik AI Assistant:
+
+--- CURRENT QUICK COMMANDS ---
+1. Add a client named [Client Name]
+2. Record payment of [Amount] for [Invoice ID]
+3. Mark [Work Order] as completed
+4. Send alert: [Message]
+
+--- CLIENT & CRM MANAGEMENT ---
+5. Add a new client named [Client Name] with phone [Phone Number]
+6. Update the email for [Client Name] to [New Email]
+7. Set the billing address for [Client Name] to [Address]
+8. Delete client [Client Name] from the system
+9. Show me all active clients
+10. Find the GSTIN for [Client Name]
+11. Remind [Client Name] about their overdue invoices
+12. Show me the lifetime revenue for [Client Name]
+13. Schedule a follow-up call with [Client Name] for tomorrow
+14. Change the primary contact for [Client Name] to [Contact Name]
+
+--- INVOICING & BILLING ---
+15. Create an invoice for [Client Name] for [Amount]
+16. Generate a proforma invoice for [Client Name]
+17. Mark Invoice #[Invoice ID] as paid in full
+18. Send Invoice #[Invoice ID] to [Client Name] via email
+19. Show me all unpaid invoices
+20. Show me invoices overdue by more than 30 days
+21. Record a partial payment of [Amount] for Invoice #[Invoice ID]
+22. Cancel Invoice #[Invoice ID]
+23. Apply a [Percentage]% discount to Invoice #[Invoice ID]
+24. Resend the payment link for Invoice #[Invoice ID]
+
+--- SALES ORDERS ---
+25. Create a new sales order for [Client Name]
+26. Add [Quantity] of [Product Name] to Sales Order #[SO ID]
+27. Update the delivery date for Sales Order #[SO ID] to [Date]
+28. Mark Sales Order #[SO ID] as approved
+29. Show me all pending sales orders
+30. Duplicate Sales Order #[SO ID] for [Client Name]
+31. Calculate the estimated profit margin for Sales Order #[SO ID]
+32. Change the shipping method for Sales Order #[SO ID] to Express
+33. Cancel Sales Order #[SO ID]
+34. Convert Sales Order #[SO ID] into an Invoice
+
+--- INVENTORY & PURCHASING ---
+35. Add [Quantity] to the stock of [Item Name]
+36. Reduce the stock of [Item Name] by [Quantity]
+37. Set the minimum stock alert for [Item Name] to [Quantity]
+38. Create a new inventory item called [Item Name]
+39. Show me all inventory items low on stock
+40. Generate a purchase order for [Quantity] of [Item Name]
+41. Mark Purchase Order #[PO ID] as received
+42. Update the unit cost of [Item Name] to [Amount]
+43. List all inventory items in the [Category] category
+44. Show the total valuation of current inventory
+
+--- PRODUCTION & WORK ORDERS ---
+45. Create a new work order for [Client Name]
+46. Move Work Order #[WO ID] to [Department/Stage]
+47. Assign Work Order #[WO ID] to [Machine Name]
+48. Update the produced quantity for Work Order #[WO ID] to [Quantity]
+49. Mark Work Order #[WO ID] as delayed
+50. Start production on Work Order #[WO ID]
+51. Log [Number] hours of downtime for machine [Machine Name]
+52. Show me all work orders currently in printing
+53. Assign quality check for Work Order #[WO ID] to [Employee Name]
+54. Export today's production report
+
+--- ARTWORK & DESIGN ---
+55. Create a new artwork job for [Client Name]
+56. Assign Artwork Job #[AW ID] to [Designer Name]
+57. Mark Artwork Job #[AW ID] as "Pending Approval"
+58. Approve the design for Artwork Job #[AW ID]
+59. Upload a new revision for Artwork Job #[AW ID]
+60. Show me all unassigned artwork jobs
+61. Change the priority of Artwork Job #[AW ID] to High
+62. Set the deadline for Artwork Job #[AW ID] to [Date]
+
+--- REPORTS & SYSTEM ---
+63. Show me the total revenue for this month
+64. Generate an expense report for last quarter
+65. Switch the system theme to light mode
+66. Open the command palette
+67. Export the client list to CSV
+68. Show me the activity log for yesterday
+69. Create a system backup
+70. Set an out-of-office auto-reply for my account
