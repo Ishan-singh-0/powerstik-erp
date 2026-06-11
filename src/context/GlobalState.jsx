@@ -155,6 +155,7 @@ export function GlobalProvider({ children }) {
     // 1. Create Invoice in Billing
     const newInvoice = {
       id: `INV-${new Date().getFullYear()}-${Math.floor(Math.random() * 900) + 100}`,
+      soId: soId,
       client: orderData.client,
       date: date,
       amount: orderData.totalAmount,
@@ -166,6 +167,7 @@ export function GlobalProvider({ children }) {
     // 2. Queue jobs in Production for each item
     const newProductionJobs = orderData.items.map(item => ({
       id: `WO-${Math.floor(Math.random() * 9000) + 1000}`,
+      soId: soId,
       name: `${orderData.client} - ${item.productName}`,
       department: item.category,
       machine: 'Unassigned',
@@ -213,6 +215,21 @@ export function GlobalProvider({ children }) {
 
   const addInvoice = (invoiceData) => {
     setInvoices(prev => [{...invoiceData, amountPaid: 0, status: 'Pending'}, ...prev]);
+  };
+
+  const deleteInvoice = (invId) => {
+    const invoiceToDelete = invoices.find(inv => inv.id === invId);
+    if (!invoiceToDelete) return;
+
+    setInvoices(prev => prev.filter(inv => inv.id !== invId));
+
+    if (invoiceToDelete.soId) {
+      setProductionJobs(prev => prev.filter(job => job.soId !== invoiceToDelete.soId));
+      setArtworkJobs(prev => prev.filter(job => job.soId !== invoiceToDelete.soId));
+      logActivity('Deleted Invoice', `Invoice ${invId} and its associated jobs were deleted.`);
+    } else {
+      logActivity('Deleted Invoice', `Invoice ${invId} was deleted.`);
+    }
   };
 
   const addArtworkJob = (job) => {
@@ -346,6 +363,7 @@ export function GlobalProvider({ children }) {
     submitSalesOrder,
     recordInvoicePayment,
     addInvoice,
+    deleteInvoice,
     addArtworkJob,
     updateArtworkJob,
     deleteArtworkJob,

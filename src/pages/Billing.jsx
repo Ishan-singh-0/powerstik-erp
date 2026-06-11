@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { FileText, Printer, CheckCircle, Clock, Search, Download } from 'lucide-react';
+import { FileText, Printer, CheckCircle, Clock, Search, Download, Trash2 } from 'lucide-react';
 import { useGlobalState } from '../context/GlobalState';
 import PromptModal from '../components/PromptModal';
 import PrintInvoice from '../components/PrintInvoice';
 import './Dashboard.css';
 
 export default function Billing() {
-  const { loading, invoices, recordInvoicePayment, addInvoice } = useGlobalState();
+  const { loading, invoices, recordInvoicePayment, addInvoice, deleteInvoice } = useGlobalState();
   const [search, setSearch] = useState('');
   const [selectedInvoices, setSelectedInvoices] = useState(new Set());
   const [printData, setPrintData] = useState([]);
@@ -49,6 +49,14 @@ export default function Billing() {
     openPrompt(`Record Payment for ${inv.id}`, balance.toString(), (amount) => {
       if (!amount || isNaN(amount) || Number(amount) <= 0) return;
       recordInvoicePayment(inv.id, amount);
+    });
+  };
+
+  const handleDeleteInvoice = (invId) => {
+    openConfirm(`Are you sure you want to delete Invoice ${invId}? This will automatically cancel and delete any linked Production or Artwork jobs.`, (confirmed) => {
+      if (confirmed) {
+        deleteInvoice(invId);
+      }
     });
   };
 
@@ -206,6 +214,9 @@ export default function Billing() {
                         )}
                         <button className="icon-btn" title="Download PDF" onClick={() => handleDownload([inv.id])}><Download size={16} /></button>
                         <button className="icon-btn" title="Print Invoice / Challan" onClick={() => handlePrint([inv.id])}><Printer size={16} /></button>
+                        <button className="icon-btn-danger" style={{ padding: '6px' }} title="Delete Invoice" onClick={() => handleDeleteInvoice(inv.id)}>
+                          <Trash2 size={16} />
+                        </button>
                       </div>
                     </td>
                   </tr>
