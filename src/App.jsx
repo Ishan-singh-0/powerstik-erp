@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { GlobalProvider, useGlobalState } from './context/GlobalState';
-import { Moon, Sun, ArrowRight } from 'lucide-react';
+import { Moon, Sun, ArrowRight, Menu, X } from 'lucide-react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import SalesOrderEntry from './pages/SalesOrderEntry';
@@ -45,6 +45,10 @@ function AppContent({ theme, toggleTheme }) {
   const { currentUser, logout } = useGlobalState();
   const isFullscreenPage = location.pathname === '/' || location.pathname === '/login';
   const isAdmin = currentUser?.role === 'admin';
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const closeMenu = () => setIsMenuOpen(false);
 
   // Protect routes logic
   const ProtectedRoute = ({ children, requireAdmin }) => {
@@ -60,7 +64,12 @@ function AppContent({ theme, toggleTheme }) {
           <div className="logo">
             <img src={`${import.meta.env.BASE_URL}powerstik-logo.png`} alt="PowerStik" style={{ height: '28px', objectFit: 'contain', filter: 'brightness(1.1)' }} />
           </div>
-          <div className="nav-links">
+          
+          <button className="mobile-menu-toggle" onClick={toggleMenu} aria-label="Toggle Menu">
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+
+          <div className={`nav-links ${isMenuOpen ? 'open' : ''}`} onClick={closeMenu}>
             <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active-nav' : ''}`}>Dashboard</Link>
             <Link to="/sales-order" className={`nav-link ${location.pathname === '/sales-order' ? 'active-nav' : ''}`}>Sales Orders</Link>
             <Link to="/artwork" className={`nav-link ${location.pathname === '/artwork' ? 'active-nav' : ''}`}>Artwork</Link>
