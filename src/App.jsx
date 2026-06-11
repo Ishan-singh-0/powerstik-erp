@@ -103,7 +103,7 @@ function AppContent({ theme, toggleTheme }) {
           <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
         </Routes>
       </main>
-      <AIAssistant />
+      {currentUser && <AIAssistant />}
     </div>
   );
 }
