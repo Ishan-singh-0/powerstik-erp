@@ -1,7 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { GlobalProvider, useGlobalState } from './context/GlobalState';
-import { Moon, Sun, ArrowRight, Menu, X, Search } from 'lucide-react';
+import {
+  Moon, Sun, Menu, X, Search, ChevronDown,
+  LayoutDashboard, ShoppingCart, Palette, Factory, Package,
+  Users, CreditCard, Truck, Clock, BarChart2, TrendingUp,
+  FileText, TrendingDown, Bell, AlignLeft, StickyNote, Activity,
+  Settings, LogOut, Zap
+} from 'lucide-react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import SalesOrderEntry from './pages/SalesOrderEntry';
@@ -27,6 +33,88 @@ import AIAssistant from './components/AIAssistant';
 import CommandPalette from './components/CommandPalette';
 import './App.css';
 
+// ─── Nav Groups ────────────────────────────────────────────────────────────────
+const NAV_GROUPS = [
+  {
+    label: 'Operations',
+    icon: <Factory size={14} />,
+    links: [
+      { to: '/sales-order', label: 'Sales Orders', icon: <ShoppingCart size={15} />, desc: 'Create & manage orders' },
+      { to: '/artwork', label: 'Artwork', icon: <Palette size={15} />, desc: 'Design & artwork board' },
+      { to: '/production', label: 'Production', icon: <Factory size={15} />, desc: '4-stage job board' },
+      { to: '/inventory', label: 'Inventory', icon: <Package size={15} />, desc: 'Stock & materials' },
+    ]
+  },
+  {
+    label: 'Finance',
+    icon: <CreditCard size={14} />,
+    adminOnly: true,
+    links: [
+      { to: '/billing', label: 'Billing', icon: <CreditCard size={15} />, desc: 'Invoices & payments' },
+      { to: '/purchase-orders', label: 'Purchases', icon: <Truck size={15} />, desc: 'Vendor purchase orders' },
+      { to: '/expenses', label: 'Expenses', icon: <TrendingDown size={15} />, desc: 'Track business costs' },
+      { to: '/invoice-aging', label: 'Aging Report', icon: <AlignLeft size={15} />, desc: 'Overdue collections' },
+      { to: '/client-statement', label: 'Statements', icon: <FileText size={15} />, desc: 'Client account PDF' },
+    ]
+  },
+  {
+    label: 'People',
+    icon: <Users size={14} />,
+    adminOnly: true,
+    links: [
+      { to: '/clients', label: 'Clients', icon: <Users size={15} />, desc: 'CRM & contacts' },
+      { to: '/timesheets', label: 'Timesheets', icon: <Clock size={15} />, desc: 'Employee attendance' },
+    ]
+  },
+  {
+    label: 'Intelligence',
+    icon: <TrendingUp size={14} />,
+    adminOnly: true,
+    links: [
+      { to: '/analytics', label: 'Analytics', icon: <BarChart2 size={15} />, desc: 'Revenue & insights' },
+      { to: '/reports', label: 'Reports', icon: <TrendingUp size={15} />, desc: 'Business reports' },
+      { to: '/notifications', label: 'Alerts', icon: <Bell size={15} />, desc: 'Smart notifications' },
+      { to: '/activity', label: 'Activity Log', icon: <Activity size={15} />, desc: 'Audit trail' },
+    ]
+  },
+];
+
+// ─── Dropdown Menu ─────────────────────────────────────────────────────────────
+function NavDropdown({ group, location, onClose }) {
+  const isActive = group.links.some(l => location.pathname === l.to);
+
+  return (
+    <div className="nav-dropdown-wrapper">
+      <button className={`nav-dropdown-trigger ${isActive ? 'active-nav' : ''}`}>
+        {group.icon}
+        {group.label}
+        <ChevronDown size={12} className="chevron" />
+      </button>
+      <div className="nav-dropdown-panel">
+        <div className="nav-dropdown-header">{group.label}</div>
+        <div className="nav-dropdown-items">
+          {group.links.map(link => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`nav-dropdown-item ${location.pathname === link.to ? 'active' : ''}`}
+              onClick={onClose}
+            >
+              <span className="ndi-icon">{link.icon}</span>
+              <span className="ndi-text">
+                <span className="ndi-label">{link.label}</span>
+                <span className="ndi-desc">{link.desc}</span>
+              </span>
+              {location.pathname === link.to && <span className="ndi-dot" />}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── App Root ──────────────────────────────────────────────────────────────────
 function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('PowerStik_theme') || 'dark');
 
@@ -35,96 +123,181 @@ function App() {
     localStorage.setItem('PowerStik_theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-  };
-
   return (
     <GlobalProvider>
       <Router>
         <ButtermaxCursor />
         <div className="noise-overlay" />
         <div className="fluid-bg" />
-        <AppContent theme={theme} toggleTheme={toggleTheme} />
+        <AppContent theme={theme} setTheme={setTheme} />
       </Router>
     </GlobalProvider>
   );
 }
 
-function AppContent({ theme, toggleTheme }) {
+function AppContent({ theme, setTheme }) {
   const location = useLocation();
   const { currentUser, logout } = useGlobalState();
   const isFullscreenPage = location.pathname === '/' || location.pathname === '/login';
   const isAdmin = currentUser?.role === 'admin';
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const closeMenu = () => setIsMenuOpen(false);
+  // Close user menu on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
-  // Protect routes logic
   const ProtectedRoute = ({ children, requireAdmin }) => {
     if (!currentUser) return <Navigate to="/login" replace />;
     if (requireAdmin && !isAdmin) return <Navigate to="/dashboard" replace />;
     return children;
   };
 
+  const visibleGroups = NAV_GROUPS.filter(g => !g.adminOnly || isAdmin);
+
   return (
     <div className="app-container">
       {!isFullscreenPage && (
-        <nav className="glass-panel navbar">
-          <div className="logo">
-            <img src={`${import.meta.env.BASE_URL}powerstik-logo.png`} alt="PowerStik" style={{ height: '28px', objectFit: 'contain', filter: 'brightness(1.1)' }} />
-          </div>
-          
-          <button className="mobile-menu-toggle" onClick={toggleMenu} aria-label="Toggle Menu">
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+        <nav className="premium-navbar">
+          <div className="navbar-inner">
+            {/* Logo */}
+            <Link to="/dashboard" className="navbar-logo" onClick={() => setMobileOpen(false)}>
+              <img
+                src={`${import.meta.env.BASE_URL}powerstik-logo.png`}
+                alt="PowerStik"
+                style={{ height: '26px', objectFit: 'contain', filter: 'brightness(1.1)' }}
+              />
+            </Link>
 
-          <div className={`nav-links ${isMenuOpen ? 'open' : ''}`} onClick={closeMenu}>
-            <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active-nav' : ''}`}>Dashboard</Link>
-            <Link to="/sales-order" className={`nav-link ${location.pathname === '/sales-order' ? 'active-nav' : ''}`}>Sales Orders</Link>
-            <Link to="/artwork" className={`nav-link ${location.pathname === '/artwork' ? 'active-nav' : ''}`}>Artwork</Link>
-            <Link to="/production" className={`nav-link ${location.pathname === '/production' ? 'active-nav' : ''}`}>Production</Link>
-            <Link to="/inventory" className={`nav-link ${location.pathname === '/inventory' ? 'active-nav' : ''}`}>Inventory</Link>
-            {isAdmin && <Link to="/clients" className={`nav-link ${location.pathname === '/clients' ? 'active-nav' : ''}`}>Clients</Link>}
-            {isAdmin && <Link to="/billing" className={`nav-link ${location.pathname === '/billing' ? 'active-nav' : ''}`}>Billing</Link>}
-            {isAdmin && <Link to="/purchase-orders" className={`nav-link ${location.pathname === '/purchase-orders' ? 'active-nav' : ''}`}>Purchases</Link>}
-            {isAdmin && <Link to="/timesheets" className={`nav-link ${location.pathname === '/timesheets' ? 'active-nav' : ''}`}>Timesheets</Link>}
-            {isAdmin && <Link to="/reports" className={`nav-link ${location.pathname === '/reports' ? 'active-nav' : ''}`}>Reports</Link>}
-            {isAdmin && <Link to="/analytics" className={`nav-link ${location.pathname === '/analytics' ? 'active-nav' : ''}`}>Analytics</Link>}
-            {isAdmin && <Link to="/invoice-aging" className={`nav-link ${location.pathname === '/invoice-aging' ? 'active-nav' : ''}`}>Aging</Link>}
-            {isAdmin && <Link to="/expenses" className={`nav-link ${location.pathname === '/expenses' ? 'active-nav' : ''}`}>Expenses</Link>}
-            {isAdmin && <Link to="/notifications" className={`nav-link ${location.pathname === '/notifications' ? 'active-nav' : ''}`}>Alerts</Link>}
-            {isAdmin && <Link to="/client-statement" className={`nav-link ${location.pathname === '/client-statement' ? 'active-nav' : ''}`}>Statements</Link>}
-            <Link to="/notes" className={`nav-link ${location.pathname === '/notes' ? 'active-nav' : ''}`}>Notes</Link>
-            {isAdmin && <Link to="/activity" className={`nav-link ${location.pathname === '/activity' ? 'active-nav' : ''}`}>Activity</Link>}
-            {isAdmin && <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active-nav' : ''}`}>Admin Portal</Link>}
-            
-            {currentUser && (
-              <button 
-                onClick={() => logout()} 
-                className="btn-secondary" 
-                style={{ marginLeft: '1rem', padding: '6px 12px', fontSize: '0.9rem' }}
+            {/* Desktop nav groups */}
+            <div className="navbar-center">
+              <Link
+                to="/dashboard"
+                className={`nav-pill ${location.pathname === '/dashboard' ? 'active-nav' : ''}`}
               >
-                Logout ({currentUser.name})
-              </button>
-            )}
+                <LayoutDashboard size={14} />
+                Dashboard
+              </Link>
 
-            <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle Theme">
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-            <button
-              onClick={() => {
-                // Dispatch a synthetic Ctrl+K to open the command palette
-                document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
-              }}
-              className="btn-secondary"
-              title="Open Command Palette"
-              style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
-            >
-              <Search size={14} /> <kbd style={{ fontSize: '11px', opacity: 0.7 }}>Ctrl K</kbd>
-            </button>
+              {visibleGroups.map(group => (
+                <NavDropdown
+                  key={group.label}
+                  group={group}
+                  location={location}
+                  onClose={() => setMobileOpen(false)}
+                />
+              ))}
+
+              <Link
+                to="/notes"
+                className={`nav-pill ${location.pathname === '/notes' ? 'active-nav' : ''}`}
+              >
+                <StickyNote size={14} />
+                Notes
+              </Link>
+            </div>
+
+            {/* Right actions */}
+            <div className="navbar-right">
+              {/* Ctrl+K Search */}
+              <button
+                className="navbar-search-btn"
+                onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }))}
+                title="Command Palette (Ctrl+K)"
+              >
+                <Search size={14} />
+                <span>Search</span>
+                <kbd>⌘K</kbd>
+              </button>
+
+              {/* Theme toggle */}
+              <button
+                className="navbar-icon-btn"
+                onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+                title="Toggle Theme"
+              >
+                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              </button>
+
+              {/* User menu */}
+              {currentUser && (
+                <div className="navbar-user-menu" ref={userMenuRef}>
+                  <button
+                    className="navbar-user-btn"
+                    onClick={() => setUserMenuOpen(o => !o)}
+                  >
+                    <div className="navbar-avatar">
+                      {currentUser.name.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="navbar-username">{currentUser.name.split(' ')[0]}</span>
+                    <ChevronDown size={12} style={{ opacity: 0.6 }} />
+                  </button>
+
+                  {userMenuOpen && (
+                    <div className="user-dropdown">
+                      <div className="user-dropdown-header">
+                        <div className="user-dropdown-avatar">{currentUser.name.charAt(0).toUpperCase()}</div>
+                        <div>
+                          <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{currentUser.name}</div>
+                          <div style={{ fontSize: '0.72rem', opacity: 0.5, textTransform: 'capitalize' }}>{currentUser.role}</div>
+                        </div>
+                      </div>
+                      <div className="user-dropdown-divider" />
+                      {isAdmin && (
+                        <Link to="/admin" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                          <Settings size={14} /> Admin Portal
+                        </Link>
+                      )}
+                      <button
+                        className="user-dropdown-item danger"
+                        onClick={() => { logout(); setUserMenuOpen(false); }}
+                      >
+                        <LogOut size={14} /> Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Mobile hamburger */}
+              <button
+                className="navbar-icon-btn mobile-only"
+                onClick={() => setMobileOpen(o => !o)}
+              >
+                {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+              </button>
+            </div>
           </div>
+
+          {/* Mobile menu */}
+          {mobileOpen && (
+            <div className="mobile-nav-panel">
+              <Link to="/dashboard" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
+                <LayoutDashboard size={16} /> Dashboard
+              </Link>
+              {visibleGroups.flatMap(g => g.links).map(link => (
+                <Link key={link.to} to={link.to} className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
+                  {link.icon} {link.label}
+                </Link>
+              ))}
+              <Link to="/notes" className="mobile-nav-link" onClick={() => setMobileOpen(false)}>
+                <StickyNote size={16} /> Notes
+              </Link>
+              {currentUser && (
+                <button className="mobile-nav-link danger" onClick={() => { logout(); setMobileOpen(false); }}>
+                  <LogOut size={16} /> Sign Out
+                </button>
+              )}
+            </div>
+          )}
         </nav>
       )}
 
