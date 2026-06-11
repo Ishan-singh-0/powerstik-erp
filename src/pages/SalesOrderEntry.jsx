@@ -61,7 +61,9 @@ export default function SalesOrderEntry() {
         const updated = { ...item, [field]: value };
         // Recalculate amount
         if (field === 'qty' || field === 'rate') {
-          updated.amount = (Number(updated.qty) * Number(updated.rate)) || 0;
+          const q = parseFloat(updated.qty) || 0;
+          const r = parseFloat(updated.rate) || 0;
+          updated.amount = q * r;
         }
         return updated;
       }

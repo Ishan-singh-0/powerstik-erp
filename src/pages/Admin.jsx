@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useGlobalState } from '../context/GlobalState';
-import { UserPlus, Trash2, Key, Shield } from 'lucide-react';
+import { UserPlus, Trash2, Key, Shield, Download, Upload, Database } from 'lucide-react';
 import './Dashboard.css';
 
 export default function Admin() {
-  const { users, addUser, deleteUser, currentUser } = useGlobalState();
+  const { users, addUser, deleteUser, currentUser, exportDatabase, importDatabase } = useGlobalState();
   const [newUserId, setNewUserId] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newName, setNewName] = useState('');
@@ -59,6 +59,38 @@ export default function Admin() {
     if (window.confirm('Are you sure you want to delete this employee account?')) {
       deleteUser(id);
     }
+  };
+
+  const handleBackup = () => {
+    const data = exportDatabase();
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `PowerStik_Backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleRestore = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const success = importDatabase(event.target.result);
+        if (success) {
+          alert('Database restored successfully! The application will now reload to apply changes.');
+          window.location.reload();
+        } else {
+          alert('Failed to restore database. Invalid file format.');
+        }
+      } catch (err) {
+        alert('Failed to read backup file.');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = null; // reset input
   };
 
   return (
@@ -178,6 +210,25 @@ export default function Admin() {
                 Currently, these users are saved in your local browser storage. To allow employees to log in from their own phones or computers, this system must be connected to a cloud database like <strong>Google Firebase</strong>.
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* Database Management Section */}
+        <div className="glass-panel" style={{ padding: '2rem', marginTop: '2rem' }}>
+          <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Database size={20} className="text-gradient" /> Database Management
+          </h3>
+          <p className="text-muted" style={{ marginBottom: '1.5rem' }}>
+            Export your entire ERP database (Users, Inventory, Production, etc.) as a JSON backup file. You can restore this file later if your browser cache is cleared.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button onClick={handleBackup} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Download size={18} /> Export Full Backup
+            </button>
+            <label className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <Upload size={18} /> Restore from Backup
+              <input type="file" accept=".json" onChange={handleRestore} style={{ display: 'none' }} />
+            </label>
           </div>
         </div>
       </div>

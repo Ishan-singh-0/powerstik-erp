@@ -299,6 +299,39 @@ export function GlobalProvider({ children }) {
     setClients(prev => prev.map(c => c.id === id ? { ...c, ...updatedData } : c));
   };
 
+  const exportDatabase = () => {
+    return JSON.stringify({
+      users,
+      inventory,
+      productionJobs,
+      artworkJobs,
+      clients,
+      invoices,
+      alerts,
+      activityLogs
+    });
+  };
+
+  const importDatabase = (data) => {
+    try {
+      const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+      if (parsed.users) setUsers(parsed.users);
+      if (parsed.inventory) setInventory(parsed.inventory);
+      if (parsed.productionJobs) setProductionJobs(parsed.productionJobs);
+      if (parsed.artworkJobs) setArtworkJobs(parsed.artworkJobs);
+      if (parsed.clients) setClients(parsed.clients);
+      if (parsed.invoices) setInvoices(parsed.invoices);
+      if (parsed.alerts) setAlerts(parsed.alerts);
+      if (parsed.activityLogs) setActivityLogs(parsed.activityLogs);
+      
+      logActivity('System Admin', 'Restored Database from Backup');
+      return true;
+    } catch (e) {
+      console.error('Import failed', e);
+      return false;
+    }
+  };
+
   const contextValue = {
     currentUser,
     login,
@@ -326,7 +359,9 @@ export function GlobalProvider({ children }) {
     addUser,
     deleteUser,
     activityLogs,
-    logActivity
+    logActivity,
+    exportDatabase,
+    importDatabase
   };
 
   return (
