@@ -60,7 +60,7 @@ export default function Login() {
         onMouseLeave={handleMouseLeave}
       >
         <div className="login-header">
-          <img src="/powerstik-logo.png" alt="PowerStik" style={{ height: '40px', objectFit: 'contain', marginBottom: '1rem', filter: 'brightness(1.1)' }} />
+          <img src={`${import.meta.env.BASE_URL}powerstik-logo.png`} alt="PowerStik" style={{ height: '40px', objectFit: 'contain', marginBottom: '1rem', filter: 'brightness(1.1)' }} />
           <h2 className="login-title">SYSTEM <span style={{color: '#007bff'}}>LOGIN</span></h2>
           <p className="text-muted">Enter credentials to access PowerStik ERP.</p>
         </div>

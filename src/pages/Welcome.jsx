@@ -7,7 +7,7 @@ export default function Welcome() {
     <div className="welcome-container animate-fade-in">
       <nav className="welcome-nav">
         <div className="logo magnetic-target">
-          <img src="/powerstik-logo.png" alt="PowerStik" style={{ height: '36px', objectFit: 'contain', filter: 'brightness(1.1)' }} />
+          <img src={`${import.meta.env.BASE_URL}powerstik-logo.png`} alt="PowerStik" style={{ height: '36px', objectFit: 'contain', filter: 'brightness(1.1)' }} />
         </div>
         <Link to="/login" className="btn-secondary magnetic-target" style={{ border: '1px solid rgba(0, 123, 255, 0.4)', color: '#007bff'}}>
           Client Login

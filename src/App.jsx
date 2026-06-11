@@ -58,7 +58,7 @@ function AppContent({ theme, toggleTheme }) {
       {!isFullscreenPage && (
         <nav className="glass-panel navbar">
           <div className="logo">
-            <img src="/powerstik-logo.png" alt="PowerStik" style={{ height: '28px', objectFit: 'contain', filter: 'brightness(1.1)' }} />
+            <img src={`${import.meta.env.BASE_URL}powerstik-logo.png`} alt="PowerStik" style={{ height: '28px', objectFit: 'contain', filter: 'brightness(1.1)' }} />
           </div>
           <div className="nav-links">
             <Link to="/dashboard" className={`nav-link ${location.pathname === '/dashboard' ? 'active-nav' : ''}`}>Dashboard</Link>
