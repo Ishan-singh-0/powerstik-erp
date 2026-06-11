@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Sparkles, Settings, FileText, Key, ChevronDown, Zap, Bot } from 'lucide-react';
+import { X, Send, Sparkles, Settings, FileText, Key, ChevronDown, Zap, Bot, Mic } from 'lucide-react';
 import { useGlobalState } from '../context/GlobalState';
 import { parseAICommand } from '../utils/aiParser';
 import './AIAssistant.css';
 
 const QUICK_COMMANDS = [
-  'Add a client named Omega Corp',
-  'Record payment of 50000 for INV-2023-001',
-  'Mark WO-2041 as completed',
-  'Send alert: System maintenance at 5PM',
+  'Add a client named [Client Name]',
+  'Record payment of [Amount] for [Invoice ID]',
+  'Mark [Work Order] as completed',
+  'Send alert: [Message]',
 ];
 
 export default function AIAssistant() {
@@ -16,7 +16,7 @@ export default function AIAssistant() {
   const [messages, setMessages] = useState([
     {
       sender: 'ai',
-      text: 'Hey! I\'m your PowerStik AI. I can manage clients, invoices, production jobs, inventory, and more — just tell me what to do.',
+      text: 'Hey! I\'m your PowerStik AI. I can manage clients, invoices, production jobs, inventory, and more — just tell me what to do or click the microphone to speak!',
       time: new Date()
     }
   ]);
@@ -24,8 +24,10 @@ export default function AIAssistant() {
   const [isTyping, setIsTyping] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showQuick, setShowQuick] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [apiKey, setApiKey] = useState(localStorage.getItem('openai_key') || '');
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const {
     addClient, recordInvoicePayment, submitSalesOrder, addInvoice,
@@ -53,6 +55,58 @@ export default function AIAssistant() {
     const a = document.createElement('a');
     a.href = url; a.download = 'PowerStik_AI_Commands.txt'; a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleQuickCommand = (cmd) => {
+    setInput(cmd);
+    setShowQuick(false);
+    
+    // Give react a tick to update the input value, then focus and select placeholder
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        const start = cmd.indexOf('[');
+        const end = cmd.indexOf(']');
+        if (start !== -1 && end !== -1) {
+          inputRef.current.setSelectionRange(start, end + 1);
+        }
+      }
+    }, 0);
+  };
+
+  const toggleListen = () => {
+    if (isListening) return;
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      pushAI("Sorry, your browser doesn't support voice recognition. Try typing instead.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => setIsListening(true);
+    
+    recognition.onresult = (event) => {
+      const speechResult = event.results[0][0].transcript;
+      setInput(prev => prev + (prev ? ' ' : '') + speechResult);
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error', event.error);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      // Optional: Automatically focus the input so the user can hit enter or edit
+      inputRef.current?.focus();
+    };
+
+    recognition.start();
   };
 
   const handleSend = (e, override) => {
@@ -198,9 +252,9 @@ export default function AIAssistant() {
               {/* Quick Commands */}
               {showQuick && (
                 <div className="ai-quick-panel">
-                  <div className="ai-quick-label"><Zap size={11} /> Quick commands</div>
+                  <div className="ai-quick-label"><Zap size={11} /> Quick command templates</div>
                   {QUICK_COMMANDS.map((cmd, i) => (
-                    <button key={i} className="ai-quick-item" onClick={() => handleSend(null, cmd)}>
+                    <button key={i} className="ai-quick-item" onClick={() => handleQuickCommand(cmd)}>
                       {cmd}
                     </button>
                   ))}
@@ -218,12 +272,21 @@ export default function AIAssistant() {
                   <Zap size={15} />
                 </button>
                 <input
+                  ref={inputRef}
                   type="text"
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   placeholder="Ask me anything..."
                   autoFocus
                 />
+                <button 
+                  type="button" 
+                  className={`ai-voice-btn ${isListening ? 'listening' : ''}`}
+                  onClick={toggleListen}
+                  title="Voice command"
+                >
+                  <Mic size={15} />
+                </button>
                 <button type="submit" className="ai-send-btn" disabled={!input.trim()}>
                   <Send size={15} />
                 </button>
