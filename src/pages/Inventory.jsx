@@ -170,6 +170,28 @@ export default function Inventory() {
         </div>
       </header>
 
+        {/* Items Critical Stat Card */}
+        <div className="stats-grid" style={{ marginBottom: '2rem' }}>
+          <div className="glass-panel stat-card" style={{ padding: '1.5rem', borderTop: '3px solid #f87171' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 className="text-muted">Items Critical</h3>
+              <span style={{ fontSize: '1.6rem' }}>🔴</span>
+            </div>
+            <p className="font-bold text-2xl" style={{ color: '#f87171', marginTop: '0.5rem' }}>
+              {inventory.filter(i => i.status === 'Critical').length}
+            </p>
+            <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '4px' }}>Items need urgent restocking</p>
+          </div>
+          <div className="glass-panel stat-card" style={{ padding: '1.5rem', borderTop: '3px solid #fbbf24' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 className="text-muted">Total SKUs</h3>
+              <span style={{ fontSize: '1.6rem' }}>📦</span>
+            </div>
+            <p className="font-bold text-2xl" style={{ color: '#fbbf24', marginTop: '0.5rem' }}>{inventory.length}</p>
+            <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '4px' }}>Unique inventory items</p>
+          </div>
+        </div>
+
         <div className="glass-panel widget" style={{ padding: '2rem' }}>
           <div className="widget-header" style={{ marginBottom: '2rem' }}>
             <div className="input-group" style={{ maxWidth: '400px' }}>
@@ -191,17 +213,26 @@ export default function Inventory() {
                   <th>Product Name</th>
                   <th>Category</th>
                   <th>Current Stock</th>
+                  <th>Daily Usage</th>
+                  <th>Est. Days Left</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredInventory.map(item => (
+                {filteredInventory.map(item => {
+                  const dailyUsage = Math.max(1, Math.ceil(item.stock * 0.03));
+                  const daysLeft = item.stock > 0 ? Math.floor(item.stock / dailyUsage) : 0;
+                  return (
                   <tr key={item.id}>
                     <td className="font-bold text-muted">{item.id}</td>
                     <td className="font-bold">{item.name}</td>
                     <td>{item.category}</td>
                     <td className="font-bold text-gradient">{item.stock} {item.unit}</td>
+                    <td style={{ color: '#a78bfa', fontWeight: 600 }}>{dailyUsage} / day</td>
+                    <td style={{ color: daysLeft <= 7 ? '#f87171' : daysLeft <= 14 ? '#fbbf24' : '#4ade80', fontWeight: 600 }}>
+                      {item.stock > 0 ? `~${daysLeft} days` : 'Depleted'}
+                    </td>
                     <td>
                       <span style={{
                         display: 'inline-flex', alignItems: 'center', gap: '4px',
@@ -221,10 +252,11 @@ export default function Inventory() {
                       </button>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
                 {filteredInventory.length === 0 && (
                   <tr>
-                    <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
+                    <td colSpan="8" style={{ textAlign: 'center', padding: '2rem' }}>
                       No inventory items found.
                     </td>
                   </tr>

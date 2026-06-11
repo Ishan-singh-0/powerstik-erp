@@ -54,21 +54,22 @@ export default function Production() {
   // State handling now managed in GlobalState.jsx
   // `updateJob` logic is completely offloaded to the context.
 
-  const getStatusIcon = (status) => {
-    switch(status) {
-      case 'Running': return <Play size={16} className="text-gradient" />;
-      case 'Completed': return <CheckCircle2 size={16} color="#4ADE80" />;
-      case 'Paused': return <AlertCircle size={16} color="#FACC15" />;
-      default: return <Clock size={16} color="var(--text-muted)" />;
-    }
-  };
+    const getStatusIcon = (status) => {
+      switch(status) {
+        case 'Printing': return <Play size={16} className="text-gradient" />;
+        case 'QC & Ready': return <CheckCircle2 size={16} color="#4ADE80" />;
+        case 'Post-Press': return <AlertCircle size={16} color="#FACC15" />;
+        case 'Pre-Press': 
+        default: return <Clock size={16} color="var(--text-muted)" />;
+      }
+    };
 
   if (loading) {
     return <div className="loading-state">Loading Production Floor Data...</div>;
   }
 
-  const activeJobs = jobs.filter(j => j.status === 'Running' || j.status === 'Paused').length;
-  const queuedJobs = jobs.filter(j => j.status === 'Queued').length;
+  const activeJobs = jobs.filter(j => j.status === 'Printing' || j.status === 'Post-Press').length;
+  const queuedJobs = jobs.filter(j => j.status === 'Pre-Press').length;
 
   const handleDragStart = (e, jobId) => {
     e.dataTransfer.setData('jobId', jobId);
@@ -182,10 +183,10 @@ export default function Production() {
           <p className="text-muted" style={{ marginBottom: '1.5rem', fontSize: '14px' }}>Drag and drop work orders between columns to instantly update their status.</p>
           
           <div className="kanban-board" style={{ display: 'flex', gap: '1.5rem', overflowX: 'auto', paddingBottom: '1rem' }}>
-            {renderColumn("Queued", "Queued")}
-            {renderColumn("Running", "Running")}
-            {renderColumn("Paused", "Paused")}
-            {renderColumn("Completed", "Completed")}
+            {renderColumn("Pre-Press", "Pre-Press")}
+            {renderColumn("Printing", "Printing")}
+            {renderColumn("Post-Press", "Post-Press")}
+            {renderColumn("QC & Ready", "QC & Ready")}
           </div>
         </div>
       </div>

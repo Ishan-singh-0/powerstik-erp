@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useGlobalState } from '../context/GlobalState';
-import { Activity, Clock, Box, TrendingUp, IndianRupee, CheckCircle, AlertTriangle, Shield, Play } from 'lucide-react';
+import { Activity, Clock, Box, TrendingUp, IndianRupee, CheckCircle, AlertTriangle, Shield, Play, Trophy } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import PromptModal from '../components/PromptModal';
 import './Dashboard.css';
@@ -34,6 +34,18 @@ export default function Dashboard() {
     }));
     
     return data.length > 0 ? data : [{ name: 'No Data', revenue: 0 }];
+  }, [invoices]);
+
+  // Sales Leaderboard
+  const leaderboard = useMemo(() => {
+    const reps = {};
+    invoices.forEach(inv => {
+      const rep = inv.salesRep || inv.client;
+      if (!reps[rep]) reps[rep] = { name: rep, revenue: 0, deals: 0 };
+      reps[rep].revenue += inv.amount;
+      reps[rep].deals += 1;
+    });
+    return Object.values(reps).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
   }, [invoices]);
 
   // My Tasks logic
@@ -184,6 +196,37 @@ export default function Dashboard() {
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Sales Leaderboard */}
+          <div className="glass-panel" style={{ padding: '2rem', marginTop: '2rem' }}>
+            <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Trophy size={20} color="#f59e0b" /> Sales Leaderboard
+            </h3>
+            {leaderboard.length === 0 ? (
+              <p className="text-muted" style={{ textAlign: 'center', padding: '2rem' }}>No invoice data available yet.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {leaderboard.map((rep, idx) => {
+                  const rankColors = ['#f59e0b', '#9ca3af', '#cd7c3f'];
+                  const rankColor = rankColors[idx] || 'var(--text-muted)';
+                  const rankLabel = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+                  return (
+                    <div key={rep.name} style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--bg-secondary)', padding: '1rem 1.25rem', borderRadius: '10px', border: `1px solid ${idx < 3 ? rankColor + '44' : 'var(--border-color)'}` }}>
+                      <span style={{ fontSize: idx < 3 ? '1.5rem' : '1rem', minWidth: '2rem', textAlign: 'center', fontWeight: 'bold', color: rankColor }}>{rankLabel}</span>
+                      <div style={{ flex: 1 }}>
+                        <p style={{ fontWeight: 'bold', fontSize: '1rem', color: idx < 3 ? rankColor : 'var(--text-primary)' }}>{rep.name}</p>
+                        <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>{rep.deals} deal{rep.deals !== 1 ? 's' : ''} closed</p>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <p style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#4ade80' }}>{globalConfig.currency}{rep.revenue.toLocaleString('en-IN')}</p>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>total revenue</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>

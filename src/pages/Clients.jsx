@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useGlobalState } from '../context/GlobalState';
-import { Users, Mail, Phone, MapPin, DollarSign, Briefcase, Plus, Edit2 } from 'lucide-react';
+import { Users, Mail, Phone, MapPin, DollarSign, Briefcase, Plus, Edit2, MessageSquare } from 'lucide-react';
 import PromptModal from '../components/PromptModal';
 import './Dashboard.css';
 
@@ -134,6 +134,30 @@ export default function Clients() {
                       <p className="font-bold" style={{ fontSize: '1.1rem', color: '#ffcb05' }}>{globalConfig.currency}{stats.totalRevenue.toLocaleString('en-IN')}</p>
                     </div>
                   </div>
+
+                  {/* Payment Reminder Buttons for Overdue Invoices */}
+                  {invoices.filter(inv => inv.client === client.name && inv.status === 'Overdue').map(inv => {
+                    const message = `*PAYMENT REMINDER*
+Dear ${client.name},
+
+This is a gentle reminder that Invoice #${inv.id} for ₹${inv.amount.toLocaleString('en-IN')} is overdue.
+
+Please process payment at your earliest convenience.
+
+Thank you,
+${globalConfig.companyName || 'PowerStik'}`;
+                    return (
+                      <button
+                        key={inv.id}
+                        className="btn-secondary"
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', padding: '0.5rem 0.9rem', borderColor: '#f59e0b', color: '#f59e0b', width: '100%', justifyContent: 'center' }}
+                        onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank')}
+                      >
+                        <MessageSquare size={14} />
+                        Send Reminder – Invoice #{inv.id}
+                      </button>
+                    );
+                  })}
                 </div>
               );
             })}

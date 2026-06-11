@@ -39,10 +39,10 @@ export function GlobalProvider({ children }) {
   ]));
 
   const [productionJobs, setProductionJobs] = useState(() => getSecureData('productionJobs', [
-    { id: 'WO-2041', name: 'Alpha Corp Annual Report', department: 'Printing', machine: 'Heidelberg SM74', status: 'Running', targetQty: 5000, producedQty: 3250 },
-    { id: 'WO-2042', name: 'Beta Tech Flyers', department: 'Lamination', machine: 'Lamination 01', status: 'Queued', targetQty: 10000, producedQty: 0 },
-    { id: 'WO-2043', name: 'Gamma Retail Boxes', department: 'Die Cutting', machine: 'Automatic Die Cutting', status: 'Completed', targetQty: 2500, producedQty: 2500 },
-    { id: 'WO-2044', name: 'Delta Stickers', department: 'Flexo Printing', machine: 'Markany Flexo E5', status: 'Paused', targetQty: 50000, producedQty: 15000 }
+    { id: 'WO-2041', name: 'Alpha Corp Annual Report', department: 'Printing', machine: 'Heidelberg SM74', status: 'Printing', targetQty: 5000, producedQty: 3250 },
+    { id: 'WO-2042', name: 'Beta Tech Flyers', department: 'Lamination', machine: 'Lamination 01', status: 'Pre-Press', targetQty: 10000, producedQty: 0 },
+    { id: 'WO-2043', name: 'Gamma Retail Boxes', department: 'Die Cutting', machine: 'Automatic Die Cutting', status: 'QC & Ready', targetQty: 2500, producedQty: 2500 },
+    { id: 'WO-2044', name: 'Delta Stickers', department: 'Flexo Printing', machine: 'Markany Flexo E5', status: 'Post-Press', targetQty: 50000, producedQty: 15000 }
   ]));
 
   const [artworkJobs, setArtworkJobs] = useState(() => getSecureData('artworkJobs', [
@@ -92,6 +92,31 @@ export function GlobalProvider({ children }) {
     setTimeout(() => {
       setLoading(false);
     }, 500);
+  }, []);
+
+  // --- Automated Daily Backup (rolling 7-day history) ---
+  useEffect(() => {
+    const BACKUP_KEY = 'PowerStik_AutoBackup';
+    const LAST_BACKUP_KEY = 'PowerStik_LastBackupDate';
+    const today = new Date().toISOString().split('T')[0];
+    const lastBackup = localStorage.getItem(LAST_BACKUP_KEY);
+    if (lastBackup !== today) {
+      try {
+        const existingBackups = JSON.parse(localStorage.getItem(BACKUP_KEY) || '{}');
+        existingBackups[today] = { invoices, productionJobs, artworkJobs, inventory, clients, users, globalConfig, savedAt: new Date().toISOString() };
+        // Keep only last 7 days
+        const dates = Object.keys(existingBackups).sort().reverse().slice(0, 7);
+        const pruned = {};
+        dates.forEach(d => { pruned[d] = existingBackups[d]; });
+        localStorage.setItem(BACKUP_KEY, JSON.stringify(pruned));
+        localStorage.setItem(LAST_BACKUP_KEY, today);
+        console.log(`[PowerStik] Auto-backup completed for ${today}`);
+      } catch (err) {
+        console.warn('[PowerStik] Auto-backup failed:', err);
+      }
+    }
+  // Intentionally run only once on mount after loading
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // --- End-to-End Encryption Sync ---
@@ -183,7 +208,7 @@ export function GlobalProvider({ children }) {
       name: `${orderData.client} - ${item.productName}`,
       department: item.category,
       machine: 'Unassigned',
-      status: 'Queued',
+      status: 'Pre-Press',
       targetQty: item.qty,
       producedQty: 0
     }));

@@ -18,14 +18,15 @@ import AIAssistant from './components/AIAssistant';
 import './App.css';
 
 function App() {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState(() => localStorage.getItem('PowerStik_theme') || 'dark');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('PowerStik_theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
   return (

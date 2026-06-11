@@ -128,7 +128,7 @@ export default function Artwork() {
         if (!designName) return;
 
         const newJob = {
-          id: `AW-500${Math.floor(Math.random() * 90) + 10}`, // Random ID
+          id: `AW-500${Math.floor(Math.random() * 90) + 10}`,
           soId: `SO-${Math.floor(Math.random() * 900) + 1000}`,
           client: client,
           designName: designName,
@@ -136,7 +136,8 @@ export default function Artwork() {
           priority: 'Medium',
           designer: 'Unassigned',
           comments: 0,
-          files: 0
+          files: 0,
+          version: 1
         };
         
         addArtworkJob(newJob);
@@ -289,6 +290,7 @@ export default function Artwork() {
                         <div>
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px' }}>
                             <span className="text-gradient font-bold text-sm">{job.id}</span>
+                            <span style={{ fontSize: '10px', background: 'rgba(96,165,250,0.15)', color: '#60A5FA', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>V{job.version || 1}</span>
                             {!isExpanded && <span className="text-muted" style={{ fontSize: '10px' }}>{job.client}</span>}
                           </div>
                           <h4 style={{ margin: '0', fontSize: '15px' }}>{job.designName}</h4>
@@ -357,6 +359,12 @@ export default function Artwork() {
                               style={{ background: 'transparent', border: '1px dashed var(--border-color)', color: 'var(--text-primary)', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                             >
                               <Upload size={12} /> Upload Proof
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); updateArtworkJob(job.id, 'version', (job.version || 1) + 1); }}
+                              style={{ background: 'rgba(96,165,250,0.1)', border: '1px solid rgba(96,165,250,0.3)', color: '#60A5FA', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              🔼 Bump to V{(job.version || 1) + 1}
                             </button>
                           </div>
                           
