@@ -95,17 +95,31 @@ export default function Inventory() {
     setIsScanning(true);
     // Parse supplier invoice
     setTimeout(() => {
-      // Find "Corrugated Box (Large)" and add stock
-      const targetItem = inventory.find(i => i.id === 'INV-101');
-      if (targetItem) {
-        const addedStock = 500;
-        const newStock = targetItem.stock + addedStock;
-        const updatedItem = { ...targetItem, stock: newStock, status: calculateStatus(newStock) };
-        updateInventoryItem('INV-101', updatedItem);
-      }
-      
       setIsScanning(false);
-      openConfirm(`✅ AI Extraction Complete! Extracted data from '${file.name}'. Automatically added 500 units to Corrugated Box (Large).`, () => {});
+      openPrompt(
+        `AI successfully scanned '${file.name}'. Enter the Item Code and Quantity to add, separated by a comma:`, 
+        "INV-101, 500", 
+        (inputText) => {
+          if (!inputText) return;
+          const parts = inputText.split(',');
+          if (parts.length !== 2) {
+            alert('Invalid format. Please use "ItemCode, Quantity" format.');
+            return;
+          }
+          const code = parts[0].trim();
+          const qty = Number(parts[1].trim());
+          
+          const targetItem = inventory.find(i => i.id.toLowerCase() === code.toLowerCase());
+          if (targetItem && !isNaN(qty)) {
+            const newStock = targetItem.stock + qty;
+            const updatedItem = { ...targetItem, stock: newStock, status: calculateStatus(newStock) };
+            updateInventoryItem(targetItem.id, updatedItem);
+            alert(`✅ Successfully added ${qty} units to ${targetItem.name}!`);
+          } else {
+            alert(`❌ Failed to parse input. Item Code '${code}' not found or quantity is invalid.`);
+          }
+        }
+      );
       e.target.value = null;
     }, 2500);
   };
