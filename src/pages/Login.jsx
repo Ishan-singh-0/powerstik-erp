@@ -11,18 +11,24 @@ export default function Login() {
   const [error, setError] = useState('');
   const { login } = useGlobalState();
   const navigate = useNavigate();
+  const loginInProgress = useRef(false);
   const cardRef = useRef(null);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (loginInProgress.current) return; // Debounce lock
+
     if (!userId.trim()) { setError('Please enter a User ID.'); return; }
     setError('');
     setLoading(true);
+    loginInProgress.current = true;
     try {
       await login(userId.trim(), password);
+      loginInProgress.current = false;
       setLoading(false);
       navigate('/dashboard');
     } catch (err) {
+      loginInProgress.current = false;
       setLoading(false);
       setError('Login failed. Please try again.');
     }
