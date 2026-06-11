@@ -87,6 +87,25 @@ export function GlobalProvider({ children }) {
     setGlobalConfig(newConfig);
   };
 
+  const [purchaseOrders, setPurchaseOrders] = useState(() => getSecureData('purchaseOrders', [
+    { id: 'PO-1001', vendor: 'PaperMart Supplies', description: 'A3 Glossy Paper Reams (500 sheets)', amount: 38000, date: '2024-01-10', status: 'Received', createdBy: 'System Admin' },
+    { id: 'PO-1002', vendor: 'InkTech Solutions', description: 'CMYK Ink Set (1L each)', amount: 22000, date: '2024-01-18', status: 'Approved', createdBy: 'System Admin' },
+    { id: 'PO-1003', vendor: 'BoxWala Ltd.', description: 'Corrugated Raw Sheets', amount: 55000, date: '2024-01-22', status: 'Pending', createdBy: 'System Admin' }
+  ]));
+
+  const addPurchaseOrder = (po) => setPurchaseOrders(prev => [po, ...prev]);
+  const updatePurchaseOrder = (id, field, value) => setPurchaseOrders(prev => prev.map(p => p.id === id ? { ...p, [field]: value } : p));
+  const deletePurchaseOrder = (id) => setPurchaseOrders(prev => prev.filter(p => p.id !== id));
+
+  const [timesheets, setTimesheets] = useState(() => getSecureData('timesheets', [
+    { id: 'TS-001', empId: 'emp01', empName: 'Demo Staff', date: new Date().toISOString().split('T')[0], shift: 'Morning (6AM–2PM)', hoursWorked: 8, status: 'Present' }
+  ]));
+
+  const addTimesheet = (entry) => setTimesheets(prev => [entry, ...prev]);
+
+  const [dismissedAlerts, setDismissedAlerts] = useState(() => getSecureData('dismissedAlerts', []));
+  const dismissAlert = (id) => setAlerts(prev => prev.filter(a => a.id !== id));
+
   // Initial load delay
   useEffect(() => {
     setTimeout(() => {
@@ -137,6 +156,8 @@ export function GlobalProvider({ children }) {
   useEffect(() => { saveSecureData('users', users); }, [users]);
   useEffect(() => { saveSecureData('activityLogs', activityLogs); }, [activityLogs]);
   useEffect(() => { saveSecureData('globalConfig', globalConfig); }, [globalConfig]);
+  useEffect(() => { saveSecureData('purchaseOrders', purchaseOrders); }, [purchaseOrders]);
+  useEffect(() => { saveSecureData('timesheets', timesheets); }, [timesheets]);
 
   // --- Actions ---
 
@@ -418,7 +439,14 @@ export function GlobalProvider({ children }) {
     exportDatabase,
     importDatabase,
     globalConfig,
-    updateGlobalConfig
+    updateGlobalConfig,
+    purchaseOrders,
+    addPurchaseOrder,
+    updatePurchaseOrder,
+    deletePurchaseOrder,
+    timesheets,
+    addTimesheet,
+    dismissAlert
   };
 
   return (

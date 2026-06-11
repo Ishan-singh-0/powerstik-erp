@@ -13,6 +13,15 @@ import Reports from './pages/Reports';
 import Clients from './pages/Clients';
 import Admin from './pages/Admin';
 import Welcome from './pages/Welcome';
+import PurchaseOrders from './pages/PurchaseOrders';
+import Timesheets from './pages/Timesheets';
+import Analytics from './pages/Analytics';
+import Notifications from './pages/Notifications';
+import ClientStatement from './pages/ClientStatement';
+import Expenses from './pages/Expenses';
+import InvoiceAging from './pages/InvoiceAging';
+import ActivityTimeline from './pages/ActivityTimeline';
+import QuickNotes from './pages/QuickNotes';
 import ButtermaxCursor from './components/ButtermaxCursor';
 import AIAssistant from './components/AIAssistant';
 import CommandPalette from './components/CommandPalette';
@@ -79,7 +88,16 @@ function AppContent({ theme, toggleTheme }) {
             <Link to="/inventory" className={`nav-link ${location.pathname === '/inventory' ? 'active-nav' : ''}`}>Inventory</Link>
             {isAdmin && <Link to="/clients" className={`nav-link ${location.pathname === '/clients' ? 'active-nav' : ''}`}>Clients</Link>}
             {isAdmin && <Link to="/billing" className={`nav-link ${location.pathname === '/billing' ? 'active-nav' : ''}`}>Billing</Link>}
+            {isAdmin && <Link to="/purchase-orders" className={`nav-link ${location.pathname === '/purchase-orders' ? 'active-nav' : ''}`}>Purchases</Link>}
+            {isAdmin && <Link to="/timesheets" className={`nav-link ${location.pathname === '/timesheets' ? 'active-nav' : ''}`}>Timesheets</Link>}
             {isAdmin && <Link to="/reports" className={`nav-link ${location.pathname === '/reports' ? 'active-nav' : ''}`}>Reports</Link>}
+            {isAdmin && <Link to="/analytics" className={`nav-link ${location.pathname === '/analytics' ? 'active-nav' : ''}`}>Analytics</Link>}
+            {isAdmin && <Link to="/invoice-aging" className={`nav-link ${location.pathname === '/invoice-aging' ? 'active-nav' : ''}`}>Aging</Link>}
+            {isAdmin && <Link to="/expenses" className={`nav-link ${location.pathname === '/expenses' ? 'active-nav' : ''}`}>Expenses</Link>}
+            {isAdmin && <Link to="/notifications" className={`nav-link ${location.pathname === '/notifications' ? 'active-nav' : ''}`}>Alerts</Link>}
+            {isAdmin && <Link to="/client-statement" className={`nav-link ${location.pathname === '/client-statement' ? 'active-nav' : ''}`}>Statements</Link>}
+            <Link to="/notes" className={`nav-link ${location.pathname === '/notes' ? 'active-nav' : ''}`}>Notes</Link>
+            {isAdmin && <Link to="/activity" className={`nav-link ${location.pathname === '/activity' ? 'active-nav' : ''}`}>Activity</Link>}
             {isAdmin && <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active-nav' : ''}`}>Admin Portal</Link>}
             
             {currentUser && (
@@ -123,6 +141,15 @@ function AppContent({ theme, toggleTheme }) {
           <Route path="/billing" element={<ProtectedRoute requireAdmin><Billing /></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute requireAdmin><Reports /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
+          <Route path="/purchase-orders" element={<ProtectedRoute requireAdmin><PurchaseOrders /></ProtectedRoute>} />
+          <Route path="/timesheets" element={<ProtectedRoute requireAdmin><Timesheets /></ProtectedRoute>} />
+          <Route path="/analytics" element={<ProtectedRoute requireAdmin><Analytics /></ProtectedRoute>} />
+          <Route path="/notifications" element={<ProtectedRoute requireAdmin><Notifications /></ProtectedRoute>} />
+          <Route path="/client-statement" element={<ProtectedRoute requireAdmin><ClientStatement /></ProtectedRoute>} />
+          <Route path="/expenses" element={<ProtectedRoute requireAdmin><Expenses /></ProtectedRoute>} />
+          <Route path="/invoice-aging" element={<ProtectedRoute requireAdmin><InvoiceAging /></ProtectedRoute>} />
+          <Route path="/activity" element={<ProtectedRoute requireAdmin><ActivityTimeline /></ProtectedRoute>} />
+          <Route path="/notes" element={<ProtectedRoute><QuickNotes /></ProtectedRoute>} />
         </Routes>
       </main>
       {currentUser && <AIAssistant />}
