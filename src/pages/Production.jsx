@@ -70,6 +70,87 @@ export default function Production() {
   const activeJobs = jobs.filter(j => j.status === 'Running' || j.status === 'Paused').length;
   const queuedJobs = jobs.filter(j => j.status === 'Queued').length;
 
+  const handleDragStart = (e, jobId) => {
+    e.dataTransfer.setData('jobId', jobId);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e, newStatus) => {
+    e.preventDefault();
+    const jobId = e.dataTransfer.getData('jobId');
+    if (jobId) {
+      updateJob(jobId, 'status', newStatus);
+    }
+  };
+
+  const renderColumn = (title, status) => {
+    const columnJobs = jobs.filter(j => j.status === status);
+    return (
+      <div 
+        className="kanban-column glass-panel" 
+        style={{ flex: 1, padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem', minWidth: '280px', minHeight: '400px', border: '1px solid rgba(255,255,255,0.05)' }}
+        onDragOver={handleDragOver}
+        onDrop={(e) => handleDrop(e, status)}
+      >
+        <h4 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {getStatusIcon(status)} {title}
+          </div>
+          <span style={{ fontSize: '12px', background: 'var(--bg-tertiary)', padding: '2px 8px', borderRadius: '12px' }}>{columnJobs.length}</span>
+        </h4>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {columnJobs.map(job => {
+            const percent = Math.min(100, Math.max(0, (job.producedQty / job.targetQty) * 100)) || 0;
+            return (
+              <div 
+                key={job.id} 
+                draggable
+                onDragStart={(e) => handleDragStart(e, job.id)}
+                className="kanban-card magnetic-target"
+                style={{ 
+                  background: 'var(--bg-secondary)', 
+                  padding: '1.25rem', 
+                  borderRadius: '8px', 
+                  border: '1px solid var(--border-color)',
+                  cursor: 'grab',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <span className="font-bold text-muted" style={{ fontSize: '12px' }}>{job.id}</span>
+                  <span style={{ fontSize: '11px', background: 'rgba(118, 51, 255, 0.1)', color: 'var(--accent-primary)', padding: '2px 6px', borderRadius: '4px' }}>
+                    {job.machine}
+                  </span>
+                </div>
+                <div className="font-bold" style={{ fontSize: '15px' }}>{job.name}</div>
+                <div className="text-muted" style={{ fontSize: '13px', marginBottom: '0.5rem' }}>Dept: {job.department}</div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <ProductionInput job={job} updateJob={updateJob} />
+                  <span className="text-muted" style={{ fontSize: '13px' }}>/ {job.targetQty.toLocaleString()}</span>
+                </div>
+                <div style={{ height: '6px', background: 'var(--bg-tertiary)', borderRadius: '3px', overflow: 'hidden', marginTop: '4px' }}>
+                  <div style={{ height: '100%', width: `${percent}%`, background: percent === 100 ? '#4ADE80' : 'var(--accent-gradient)', transition: 'width 0.3s ease' }}></div>
+                </div>
+              </div>
+            );
+          })}
+          {columnJobs.length === 0 && (
+            <div className="text-muted" style={{ textAlign: 'center', marginTop: '2rem', fontSize: '13px', border: '1px dashed var(--border-color)', padding: '2rem', borderRadius: '8px' }}>
+              Drop jobs here
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="dashboard-layout animate-fade-in">
       <div className="dashboard-content" style={{ padding: '0' }}>
@@ -96,76 +177,15 @@ export default function Production() {
           </div>
         </div>
 
-        <div className="glass-panel widget" style={{ padding: '2rem' }}>
-          <h3 style={{ marginBottom: '1.5rem', fontWeight: 600 }}>Active Work Orders</h3>
-          <div className="items-table-wrapper">
-            <table className="items-table">
-              <thead>
-                <tr>
-                  <th>Job ID</th>
-                  <th>Job Name</th>
-                  <th>Department</th>
-                  <th>Assigned Machine</th>
-                  <th>Status</th>
-                  <th>Production Qty (Produced / Target)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {jobs.map(job => {
-                  const percent = Math.min(100, Math.max(0, (job.producedQty / job.targetQty) * 100)) || 0;
-                  
-                  return (
-                    <tr key={job.id}>
-                      <td className="font-bold text-muted">{job.id}</td>
-                      <td className="font-bold">{job.name}</td>
-                      <td>{job.department}</td>
-                      <td>{job.machine}</td>
-                      <td>
-                        <div className="flex-center" style={{ justifyContent: 'flex-start', gap: '8px' }}>
-                          {getStatusIcon(job.status)}
-                          <select 
-                            value={job.status}
-                            onChange={(e) => updateJob(job.id, 'status', e.target.value)}
-                            style={{
-                              background: 'transparent',
-                              color: 'inherit',
-                              border: '1px solid var(--border-color)',
-                              padding: '4px 8px',
-                              borderRadius: '4px',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <option style={{ background: '#111' }} value="Queued">Queued</option>
-                            <option style={{ background: '#111' }} value="Running">Running</option>
-                            <option style={{ background: '#111' }} value="Paused">Paused</option>
-                            <option style={{ background: '#111' }} value="Completed">Completed</option>
-                          </select>
-                        </div>
-                      </td>
-                      <td style={{ width: '320px' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <ProductionInput job={job} updateJob={updateJob} />
-                            <span className="text-muted">/ {job.targetQty.toLocaleString()}</span>
-                            <span className="text-muted" style={{ marginLeft: 'auto', fontSize: '12px' }}>
-                              {percent.toFixed(0)}%
-                            </span>
-                          </div>
-                          <div style={{ background: 'var(--bg-tertiary)', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
-                            <div style={{ 
-                              background: job.status === 'Completed' ? '#4ADE80' : 'var(--accent-gradient)', 
-                              height: '100%', 
-                              width: `${percent}%`,
-                              transition: 'width 0.3s ease-in-out'
-                            }}></div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+        <div style={{ marginBottom: '2rem' }}>
+          <h3 style={{ marginBottom: '1.5rem', fontWeight: 600 }}>Interactive Kanban Board</h3>
+          <p className="text-muted" style={{ marginBottom: '1.5rem', fontSize: '14px' }}>Drag and drop work orders between columns to instantly update their status.</p>
+          
+          <div className="kanban-board" style={{ display: 'flex', gap: '1.5rem', overflowX: 'auto', paddingBottom: '1rem' }}>
+            {renderColumn("Queued", "Queued")}
+            {renderColumn("Running", "Running")}
+            {renderColumn("Paused", "Paused")}
+            {renderColumn("Completed", "Completed")}
           </div>
         </div>
       </div>
