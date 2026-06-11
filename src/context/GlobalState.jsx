@@ -374,6 +374,10 @@ export function GlobalProvider({ children }) {
     setClients(prev => prev.map(c => c.id === id ? { ...c, ...updatedData } : c));
   };
 
+  const deleteClient = (id) => {
+    setClients(prev => prev.filter(c => c.id !== id));
+  };
+
   const exportDatabase = () => {
     return JSON.stringify({
       users,
@@ -431,6 +435,7 @@ export function GlobalProvider({ children }) {
     deleteInventoryItem,
     addClient,
     updateClient,
+    deleteClient,
     users,
     addUser,
     deleteUser,
