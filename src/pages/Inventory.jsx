@@ -21,6 +21,12 @@ export default function Inventory() {
   const openConfirm = (title, onConfirm) => {
     setModalConfig({ isOpen: true, type: 'confirm', title, defaultValue: '', onConfirm });
   };
+  const openPrompt = (title, defaultValue, onConfirm) => {
+    setModalConfig({ isOpen: true, type: 'prompt', title, defaultValue, onConfirm });
+  };
+  const openAlert = (title, onConfirm = null) => {
+    setModalConfig({ isOpen: true, type: 'alert', title, defaultValue: '', onConfirm });
+  };
   const closeModal = () => setModalConfig({ ...modalConfig, isOpen: false });
   const handleModalConfirm = (value) => {
     if (modalConfig.onConfirm) modalConfig.onConfirm(value);
@@ -104,7 +110,7 @@ export default function Inventory() {
           if (!inputText) return;
           const parts = inputText.split(',');
           if (parts.length !== 2) {
-            alert('Invalid format. Please use "ItemCode, Quantity" format.');
+            openAlert('⚠️ Invalid format. Please use "ItemCode, Quantity" format.');
             return;
           }
           const code = parts[0].trim();
@@ -115,9 +121,9 @@ export default function Inventory() {
             const newStock = targetItem.stock + qty;
             const updatedItem = { ...targetItem, stock: newStock, status: calculateStatus(newStock) };
             updateInventoryItem(targetItem.id, updatedItem);
-            alert(`✅ Successfully added ${qty} units to ${targetItem.name}!`);
+            openAlert(`✅ Successfully added ${qty} units to ${targetItem.name}!`);
           } else {
-            alert(`❌ Failed to parse input. Item Code '${code}' not found or quantity is invalid.`);
+            openAlert(`❌ Failed to parse input. Item Code '${code}' not found or quantity is invalid.`);
           }
         }
       );

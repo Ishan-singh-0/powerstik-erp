@@ -72,6 +72,9 @@ export default function Dashboard() {
   const openPrompt = (title, defaultValue, onConfirm) => {
     setModalConfig({ isOpen: true, type: 'prompt', title, defaultValue, onConfirm });
   };
+  const openAlert = (title, onConfirm = null) => {
+    setModalConfig({ isOpen: true, type: 'alert', title, onConfirm });
+  };
   const closeModal = () => setModalConfig({ ...modalConfig, isOpen: false });
 
   const handleModalConfirm = (value) => {
@@ -86,7 +89,7 @@ export default function Dashboard() {
     openPrompt("Enter Machine Status (e.g., 'Heidelberg paused for maintenance'):", "", (statusText) => {
       if (statusText) {
         logActivity('Machine Status Update', statusText);
-        alert('Status logged successfully! The Admin will see this on their dashboard.');
+        openAlert('✅ Status logged successfully! The Admin will see this on their dashboard.');
       }
     });
   };
@@ -95,7 +98,7 @@ export default function Dashboard() {
     openPrompt("What raw material do you need?", "e.g., 500 Kgs Glossy Paper", (requestText) => {
       if (requestText) {
         logActivity('Material Request', requestText);
-        alert('Material request sent to Admin!');
+        openAlert('✅ Material request sent to Admin!');
       }
     });
   };

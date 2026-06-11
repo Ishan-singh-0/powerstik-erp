@@ -52,9 +52,16 @@ export default function Expenses() {
   };
 
   const deleteExpense = (id) => {
-    if (window.confirm('Delete this expense?')) {
-      save(expenses.filter(e => e.id !== id));
-    }
+    setModal({
+      isOpen: true,
+      type: 'confirm',
+      title: 'Are you sure you want to delete this expense?',
+      onConfirm: () => {
+        save(expenses.filter(e => e.id !== id));
+        setModal(null);
+      },
+      onClose: () => setModal(null)
+    });
   };
 
   // Filter

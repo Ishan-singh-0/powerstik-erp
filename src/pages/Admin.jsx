@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useGlobalState } from '../context/GlobalState';
 import { UserPlus, Trash2, Key, Shield, Download, Upload, Database, Settings } from 'lucide-react';
+import PromptModal from '../components/PromptModal';
 import './Dashboard.css';
 
 export default function Admin() {
@@ -17,10 +18,28 @@ export default function Admin() {
     companyAddress: '123 Factory Lane, Industrial Area, Pune'
   });
 
+  const [modalConfig, setModalConfig] = useState({ isOpen: false, type: 'alert', title: '', onConfirm: null });
+
+  const openAlert = (title, onConfirm = null) => {
+    setModalConfig({ isOpen: true, type: 'alert', title, onConfirm });
+  };
+
+  const openConfirm = (title, onConfirm) => {
+    setModalConfig({ isOpen: true, type: 'confirm', title, onConfirm });
+  };
+
+  const closeModal = () => setModalConfig({ ...modalConfig, isOpen: false });
+
+  const handleModalConfirm = () => {
+    const callback = modalConfig.onConfirm;
+    closeModal();
+    if (callback) setTimeout(callback, 10);
+  };
+
   const handleSaveConfig = (e) => {
     e.preventDefault();
     updateGlobalConfig(configForm);
-    alert('Global Settings updated successfully!');
+    openAlert('✅ Global Settings updated successfully!');
   };
 
   if (currentUser?.role !== 'admin') {
@@ -40,13 +59,13 @@ export default function Admin() {
   const handleGenerateUser = (e) => {
     e.preventDefault();
     if (!newUserId.trim() || !newPassword.trim() || !newName.trim()) {
-      alert('Please fill out all fields.');
+      openAlert('⚠️ Please fill out all fields.');
       return;
     }
     
     // Check if ID already exists
     if (users.find(u => u.id.toLowerCase() === newUserId.toLowerCase())) {
-      alert('User ID already exists!');
+      openAlert('⚠️ User ID already exists!');
       return;
     }
 
@@ -61,17 +80,17 @@ export default function Admin() {
     setNewPassword('');
     setNewName('');
     setNewRole('production');
-    alert('Employee account generated successfully!');
+    openAlert('✅ Employee account generated successfully!');
   };
 
   const handleDelete = (id) => {
     if (id === 'admin') {
-      alert('Cannot delete the master admin account.');
+      openAlert('⚠️ Cannot delete the master admin account.');
       return;
     }
-    if (window.confirm('Are you sure you want to delete this employee account?')) {
+    openConfirm('Are you sure you want to delete this employee account?', () => {
       deleteUser(id);
-    }
+    });
   };
 
   const handleBackup = () => {
@@ -93,13 +112,14 @@ export default function Admin() {
       try {
         const success = importDatabase(event.target.result);
         if (success) {
-          alert('Database restored successfully! The application will now reload to apply changes.');
-          window.location.reload();
+          openAlert('✅ Database restored successfully! The application will now reload to apply changes.', () => {
+            window.location.reload();
+          });
         } else {
-          alert('Failed to restore database. Invalid file format.');
+          openAlert('⚠️ Failed to restore database. Invalid file format.');
         }
       } catch (err) {
-        alert('Failed to read backup file.');
+        openAlert('⚠️ Failed to read backup file.');
       }
     };
     reader.readAsText(file);
@@ -108,6 +128,13 @@ export default function Admin() {
 
   return (
     <div className="dashboard-layout animate-fade-in">
+      <PromptModal 
+        isOpen={modalConfig.isOpen} 
+        type={modalConfig.type} 
+        title={modalConfig.title} 
+        onConfirm={handleModalConfirm} 
+        onClose={closeModal} 
+      />
       <div className="dashboard-content">
         <header className="dashboard-header">
           <h2>Admin Portal</h2>
