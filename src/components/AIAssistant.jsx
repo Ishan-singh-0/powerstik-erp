@@ -48,13 +48,18 @@ export default function AIAssistant() {
     setMessages(prev => [...prev, { sender: 'ai', text, time: new Date() }]);
   };
 
-  const handleDownloadCommands = () => {
-    const text = `POWERSTIK AI ASSISTANT — COMMAND REFERENCE\n\n1. BILLING & INVOICES\n- "Create invoice for Beta Tech of 50000"\n- "Record payment of 50000 for INV-2023-001"\n\n2. INVENTORY\n- "Create new item Golden Foil with 100 rolls"\n- "Add 500 units to Corrugated Box"\n- "Deduct 10 from Binding Glue"\n\n3. PRODUCTION\n- "Start WO-2041"\n- "Mark WO-2041 as completed"\n\n4. ARTWORK\n- "Assign AW-5004 to Sarah"\n- "Approve AW-5002"\n\n5. CLIENTS\n- "Add a new client named Omega Corp"\n\n6. ALERTS\n- "Send alert: System maintenance at 5PM"\n`;
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'PowerStik_AI_Commands.txt'; a.click();
-    URL.revokeObjectURL(url);
+  const handleDownloadCommands = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.BASE_URL}commands list.txt`);
+      const text = await response.text();
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'PowerStik_AI_Commands.txt'; a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Failed to download commands", err);
+    }
   };
 
   const handleQuickCommand = (cmd) => {
