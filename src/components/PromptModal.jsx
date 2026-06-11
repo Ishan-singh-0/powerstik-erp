@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, CheckCircle, AlertTriangle, Info } from 'lucide-react';
 
 /**
@@ -24,7 +25,7 @@ export default function PromptModal({ isOpen, type, title, defaultValue, onConfi
 
   const accentColor = isSuccess ? '#4ade80' : isWarning ? '#fbbf24' : 'var(--accent-primary)';
 
-  return (
+  const modalContent = (
     <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal-content glass-panel animate-modal-in" style={{ maxWidth: '420px', padding: '1.75rem' }}>
 
@@ -102,4 +103,6 @@ export default function PromptModal({ isOpen, type, title, defaultValue, onConfi
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
