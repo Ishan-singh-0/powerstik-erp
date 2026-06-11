@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useGlobalState } from '../context/GlobalState';
 import { Users, Mail, Phone, MapPin, DollarSign, Briefcase, Plus, Edit2, MessageSquare } from 'lucide-react';
 import PromptModal from '../components/PromptModal';
+import EmptyState from '../components/EmptyState';
 import './Dashboard.css';
 
 export default function Clients() {
@@ -162,9 +163,13 @@ ${globalConfig.companyName || 'PowerStik'}`;
               );
             })}
             {filteredClients.length === 0 && (
-              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem' }}>
-                <Users size={48} color="#444" style={{ margin: '0 auto 1rem' }} />
-                <h3>No clients found.</h3>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <EmptyState 
+                  title="No clients found" 
+                  description={search ? `No clients matched your search for "${search}".` : "You haven't added any clients yet."}
+                  actionText="Add New Client"
+                  onAction={handleAddClient}
+                />
               </div>
             )}
           </div>

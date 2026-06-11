@@ -171,7 +171,7 @@ export default function Reports() {
         {/* Detailed Data Table */}
         <div className="glass-panel widget" style={{ padding: '2rem', marginTop: '2rem' }}>
           <h3 style={{ marginBottom: '1.5rem', fontWeight: 600 }}>Data Breakdown</h3>
-          <div className="items-table-wrapper">
+          <div className="table-responsive">
             <table className="items-table">
               <thead>
                 <tr>

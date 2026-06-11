@@ -3,6 +3,7 @@ import { Plus, Trash2, Save, Send, Edit2, ScanText, Sparkles } from 'lucide-reac
 import { getMasters } from '../services/masters';
 import { useGlobalState } from '../context/GlobalState';
 import PromptModal from '../components/PromptModal';
+import EmptyState from '../components/EmptyState';
 import './SalesOrderEntry.css';
 
 export default function SalesOrderEntry() {
@@ -286,7 +287,7 @@ export default function SalesOrderEntry() {
             <button className="icon-btn-primary" onClick={addItem}><Plus size={18} /> Add Item</button>
           </div>
           
-          <div className="items-table-wrapper">
+          <div className="table-responsive">
             <table className="items-table">
               <thead>
                 <tr>
@@ -374,6 +375,18 @@ export default function SalesOrderEntry() {
                     </td>
                   </tr>
                 ))}
+                {items.length === 0 && (
+                  <tr>
+                    <td colSpan="6" style={{ padding: 0, border: 'none' }}>
+                      <EmptyState 
+                        title="No items added yet" 
+                        description="Start building your sales order by adding products."
+                        actionText="Add Line Item"
+                        onAction={addItem}
+                      />
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

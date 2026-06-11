@@ -178,7 +178,7 @@ export default function Billing() {
             </div>
           </div>
 
-          <div className="items-table-wrapper">
+          <div className="table-responsive">
             <table className="items-table">
               <thead>
                 <tr>

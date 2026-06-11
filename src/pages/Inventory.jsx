@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { PackageSearch, Plus, Filter, Trash2, Edit3, X, ScanText, Sparkles } from 'lucide-react';
 import PromptModal from '../components/PromptModal';
+import EmptyState from '../components/EmptyState';
 import { getMasters } from '../services/masters';
 import { useGlobalState } from '../context/GlobalState';
 import './Dashboard.css';
@@ -205,7 +206,7 @@ export default function Inventory() {
             </div>
           </div>
 
-          <div className="items-table-wrapper">
+          <div className="table-responsive">
             <table className="items-table">
               <thead>
                 <tr>
@@ -256,8 +257,13 @@ export default function Inventory() {
                 })}
                 {filteredInventory.length === 0 && (
                   <tr>
-                    <td colSpan="8" style={{ textAlign: 'center', padding: '2rem' }}>
-                      No inventory items found.
+                    <td colSpan="8" style={{ padding: 0, border: 'none' }}>
+                      <EmptyState 
+                        title="No inventory items found" 
+                        description={search ? `No items matched your search for "${search}".` : "Add items manually or use AI to parse a supplier invoice."}
+                        actionText="Add New Item"
+                        onAction={handleAddClick}
+                      />
                     </td>
                   </tr>
                 )}

@@ -289,3 +289,11 @@ input:focus, select:focus, textarea:focus {
 .spin {
   animation: spin 1s linear infinite;
 }
+
+/* Responsive Tables */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+}

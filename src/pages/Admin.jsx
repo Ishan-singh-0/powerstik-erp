@@ -177,7 +177,7 @@ export default function Admin() {
               <Shield size={20} color="#007bff" /> Active System Users
             </h3>
             
-            <div className="items-table-wrapper">
+            <div className="table-responsive">
               <table className="items-table">
                 <thead>
                   <tr>
