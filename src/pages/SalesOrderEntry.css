@@ -1,0 +1,145 @@
+.so-entry-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
+}
+
+.so-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.so-header h2 {
+  font-size: 1.75rem;
+}
+
+.so-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.form-container {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.input-group-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-group-col label {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.items-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.items-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.icon-btn-primary {
+  background: rgba(118, 51, 255, 0.1);
+  color: var(--accent-primary);
+  border: 1px solid rgba(118, 51, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition-fast);
+}
+
+.icon-btn-primary:hover {
+  background: rgba(118, 51, 255, 0.2);
+}
+
+.items-table-wrapper {
+  overflow-x: auto;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.items-table th, .items-table td {
+  padding: 0.75rem;
+  vertical-align: middle;
+}
+
+.items-table th {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.items-table td {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.items-table tr:last-child td {
+  border-bottom: none;
+}
+
+.icon-btn-danger {
+  background: rgba(248, 113, 113, 0.1);
+  color: #F87171;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.icon-btn-danger:hover {
+  background: rgba(248, 113, 113, 0.2);
+}
+
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+}
+
+.total-display {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-tertiary);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+}

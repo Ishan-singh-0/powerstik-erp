@@ -1,0 +1,137 @@
+.login-container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.back-link {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: 2px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.back-link:hover {
+  opacity: 1;
+  color: var(--butter-yellow);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 3rem 2.5rem;
+  background: rgba(10, 10, 10, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-style: preserve-3d;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  transform: translateZ(30px);
+}
+
+.login-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: white;
+  margin-top: 10px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transform: translateZ(20px);
+}
+
+.buttermax-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.buttermax-input-group .input-icon {
+  position: absolute;
+  left: 16px;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.3s ease;
+}
+
+.buttermax-input-group input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px 16px 16px 45px;
+  border-radius: 12px;
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  transition: background 0.3s ease;
+}
+
+.buttermax-input-group input:focus {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.buttermax-input-group input:focus + .input-border {
+  width: 100%;
+}
+
+.buttermax-input-group input:focus ~ .input-icon {
+  color: var(--butter-yellow);
+}
+
+.input-border {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background: var(--butter-yellow);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.buttermax-login-btn {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 18px;
+  background: white;
+  color: var(--butter-dark);
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform: translateZ(40px);
+}
+
+.buttermax-login-btn:hover:not(:disabled) {
+  background: var(--butter-yellow);
+  box-shadow: 0 0 25px rgba(255, 203, 5, 0.4);
+}
+
+.buttermax-login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
