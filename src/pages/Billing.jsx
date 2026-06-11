@@ -6,7 +6,7 @@ import PrintInvoice from '../components/PrintInvoice';
 import './Dashboard.css';
 
 export default function Billing() {
-  const { loading, invoices, recordInvoicePayment, addInvoice, deleteInvoice } = useGlobalState();
+  const { loading, invoices, recordInvoicePayment, addInvoice, deleteInvoice, globalConfig } = useGlobalState();
   const [search, setSearch] = useState('');
   const [selectedInvoices, setSelectedInvoices] = useState(new Set());
   const [printData, setPrintData] = useState([]);
@@ -77,7 +77,7 @@ export default function Billing() {
   const handleCreateInvoice = () => {
     openPrompt("Enter Client Name:", "", (client) => {
       if (!client) return;
-      openPrompt("Enter Invoice Amount (₹):", "", (amount) => {
+      openPrompt(`Enter Invoice Amount (${globalConfig.currency}):`, "", (amount) => {
         if (!amount || isNaN(amount)) return;
         addInvoice({
           id: `INV-${new Date().getFullYear()}-${Math.floor(Math.random() * 900) + 100}`,
@@ -142,7 +142,7 @@ export default function Billing() {
         <div className="stats-grid" style={{ marginBottom: '2rem' }}>
           <div className="glass-panel stat-card" style={{ padding: '1.5rem' }}>
             <h3 className="text-muted">Total Outstanding</h3>
-            <p className="font-bold text-2xl text-gradient">₹{totalOutstanding.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
+            <p className="font-bold text-2xl text-gradient">{globalConfig.currency}{totalOutstanding.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
           </div>
           <div className="glass-panel stat-card" style={{ padding: '1.5rem' }}>
             <h3 className="text-muted">Invoices Generated (30d)</h3>
@@ -150,7 +150,7 @@ export default function Billing() {
           </div>
           <div className="glass-panel stat-card" style={{ padding: '1.5rem' }}>
             <h3 className="text-muted">Payments Received</h3>
-            <p className="font-bold text-2xl" style={{ color: '#4ADE80' }}>₹{totalReceived.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
+            <p className="font-bold text-2xl" style={{ color: '#4ADE80' }}>{globalConfig.currency}{totalReceived.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
           </div>
         </div>
 
@@ -200,9 +200,9 @@ export default function Billing() {
                     <td className="font-bold text-gradient">{inv.id}</td>
                     <td className="font-bold">{inv.client}</td>
                     <td>{inv.date}</td>
-                    <td className="font-bold">₹{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                    <td className="font-bold">{globalConfig.currency}{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                     <td className="font-bold" style={{ color: (inv.amount - (inv.amountPaid || 0)) > 0 ? '#ffcb05' : '#4ADE80' }}>
-                      ₹{(inv.amount - (inv.amountPaid || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      {globalConfig.currency}{(inv.amount - (inv.amountPaid || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
                     <td>{getStatusBadge(inv.status)}</td>
                     <td>

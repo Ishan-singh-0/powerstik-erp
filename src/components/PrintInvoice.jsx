@@ -3,7 +3,7 @@ import { useGlobalState } from '../context/GlobalState';
 import './PrintInvoice.css';
 
 export default function PrintInvoice({ invoices }) {
-  const { clients } = useGlobalState();
+  const { clients, globalConfig } = useGlobalState();
 
   if (!invoices || invoices.length === 0) return null;
 
@@ -23,7 +23,7 @@ export default function PrintInvoice({ invoices }) {
           <div className="invoice-header">
             <div className="invoice-brand">
               <h1 style={{ color: '#007bff', fontSize: '28px', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '32px' }}>⬡</span> PowerStik
+                <span style={{ fontSize: '32px' }}>⬡</span> {globalConfig.companyName}
               </h1>
               <p>Premium Packaging & Print Solutions</p>
             </div>
@@ -64,8 +64,8 @@ export default function PrintInvoice({ invoices }) {
             </div>
             <div className="address-block text-right">
               <h3>From:</h3>
-              <p><strong>PowerStik Packaging Ltd.</strong></p>
-              <p>123 Industrial Estate<br />Mumbai, MH 400001<br />GSTIN: 27AAAAA1234A1Z5</p>
+              <p><strong>{globalConfig.companyName}</strong></p>
+              <p style={{ whiteSpace: 'pre-line' }}>{globalConfig.companyAddress}</p>
             </div>
           </div>
 
@@ -89,8 +89,8 @@ export default function PrintInvoice({ invoices }) {
                   <span style={{ fontSize: '12px', color: '#666' }}>As per approved sales order specifications.</span>
                 </td>
                 <td>1</td>
-                <td>₹{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                <td>₹{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td>{globalConfig.currency}{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td>{globalConfig.currency}{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
               </tr>
               {/* Extra spacing row */}
               <tr className="spacer-row"><td colSpan="5"></td></tr>
@@ -111,24 +111,24 @@ export default function PrintInvoice({ invoices }) {
                 <tbody>
                   <tr>
                     <td>Subtotal:</td>
-                    <td>₹{(inv.amount * 0.82).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                    <td>{globalConfig.currency}{(inv.amount * (1 - globalConfig.taxRate / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                   </tr>
                   <tr>
-                    <td>GST (18%):</td>
-                    <td>₹{(inv.amount * 0.18).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                    <td>GST ({globalConfig.taxRate}%):</td>
+                    <td>{globalConfig.currency}{(inv.amount * (globalConfig.taxRate / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                   </tr>
                   <tr className="grand-total">
                     <td>Grand Total:</td>
-                    <td>₹{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                    <td>{globalConfig.currency}{inv.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                   </tr>
                   <tr>
                     <td style={{ paddingTop: '12px' }}>Amount Paid:</td>
-                    <td style={{ paddingTop: '12px' }}>₹{(inv.amountPaid || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                    <td style={{ paddingTop: '12px' }}>{globalConfig.currency}{(inv.amountPaid || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                   </tr>
                   <tr style={{ fontSize: '16px' }}>
                     <td style={{ fontWeight: 'bold', paddingTop: '8px' }}>Balance Due:</td>
                     <td style={{ fontWeight: 'bold', paddingTop: '8px', color: (inv.amount - (inv.amountPaid || 0)) > 0 ? '#333' : '#16a34a' }}>
-                      ₹{(inv.amount - (inv.amountPaid || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      {globalConfig.currency}{(inv.amount - (inv.amountPaid || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </td>
                   </tr>
                 </tbody>
@@ -140,9 +140,9 @@ export default function PrintInvoice({ invoices }) {
           <div className="invoice-footer">
             <div className="signature-box">
               <div className="signature-line">Authorized Signatory</div>
-              <p>For PowerStik Packaging Ltd.</p>
+              <p>For {globalConfig.companyName}</p>
             </div>
-            <p className="footer-note">Thank you for your business! For any queries regarding this invoice, please contact info@powerstik.net or call +91 9999117563.</p>
+            <p className="footer-note">Thank you for your business! For any queries regarding this invoice, please contact us.</p>
           </div>
         </div>
         );

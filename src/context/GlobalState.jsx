@@ -76,6 +76,17 @@ export function GlobalProvider({ children }) {
     { id: 1, user: 'System', action: 'System Initialization', time: new Date().toISOString() }
   ]));
 
+  const [globalConfig, setGlobalConfig] = useState(() => getSecureData('globalConfig', {
+    currency: '₹',
+    taxRate: 18,
+    companyName: 'PowerStik India',
+    companyAddress: '123 Factory Lane, Industrial Area, Pune'
+  }));
+
+  const updateGlobalConfig = (newConfig) => {
+    setGlobalConfig(newConfig);
+  };
+
   // Initial load delay
   useEffect(() => {
     setTimeout(() => {
@@ -100,6 +111,7 @@ export function GlobalProvider({ children }) {
   useEffect(() => { saveSecureData('clients', clients); }, [clients]);
   useEffect(() => { saveSecureData('users', users); }, [users]);
   useEffect(() => { saveSecureData('activityLogs', activityLogs); }, [activityLogs]);
+  useEffect(() => { saveSecureData('globalConfig', globalConfig); }, [globalConfig]);
 
   // --- Actions ---
 
@@ -379,7 +391,9 @@ export function GlobalProvider({ children }) {
     activityLogs,
     logActivity,
     exportDatabase,
-    importDatabase
+    importDatabase,
+    globalConfig,
+    updateGlobalConfig
   };
 
   return (

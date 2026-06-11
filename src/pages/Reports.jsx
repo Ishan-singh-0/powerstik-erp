@@ -5,7 +5,7 @@ import { useGlobalState } from '../context/GlobalState';
 import './Dashboard.css';
 
 export default function Reports() {
-  const { invoices, productionJobs, inventory } = useGlobalState();
+  const { invoices, productionJobs, inventory, globalConfig } = useGlobalState();
   const [reportType, setReportType] = useState('sales');
   // Dynamically compute Sales Data from global invoices
   const salesData = invoices.map(inv => ({
@@ -23,7 +23,7 @@ export default function Reports() {
   // Dynamically compute Inventory Data grouped by category
   const inventoryGroups = inventory.reduce((acc, item) => {
     if (!acc[item.category]) acc[item.category] = 0;
-    acc[item.category] += (item.stock * 15); // Avg unit value of ₹15 for valuation
+    acc[item.category] += (item.stock * 15); // Avg unit value of 15 for valuation
     return acc;
   }, {});
   
@@ -37,13 +37,13 @@ export default function Reports() {
     let headers = [];
     
     if (reportType === 'sales') {
-      headers = ['Week', 'Revenue (₹)', 'Margin (₹)'];
+      headers = ['Week', `Revenue (${globalConfig.currency})`, `Margin (${globalConfig.currency})`];
       dataToExport = salesData.map(d => [d.name, d.revenue, d.margin]);
     } else if (reportType === 'production') {
       headers = ['Day', 'Efficiency (%)'];
       dataToExport = productionData.map(d => [d.name, d.efficiency]);
     } else {
-      headers = ['Category', 'Valuation (₹)'];
+      headers = ['Category', `Valuation (${globalConfig.currency})`];
       dataToExport = inventoryData.map(d => [d.name, d.value]);
     }
 
@@ -67,7 +67,7 @@ export default function Reports() {
           <p className="font-bold">{label}</p>
           {payload.map((p, idx) => (
             <p key={idx} style={{ color: p.color }}>
-              {p.name}: {reportType !== 'production' ? '₹' : ''}{p.value}{reportType === 'production' ? '%' : ''}
+              {p.name}: {reportType !== 'production' ? globalConfig.currency : ''}{p.value}{reportType === 'production' ? '%' : ''}
             </p>
           ))}
         </div>
@@ -161,7 +161,7 @@ export default function Reports() {
                   <YAxis stroke="#888" />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
-                  <Bar dataKey="value" fill="#60A5FA" name="Valuation (₹)" />
+                  <Bar dataKey="value" fill="#60A5FA" name={`Valuation (${globalConfig.currency})`} />
                 </BarChart>
               )}
             </ResponsiveContainer>
@@ -190,8 +190,8 @@ export default function Reports() {
                 {reportType === 'sales' && salesData.map(d => (
                   <tr key={d.name}>
                     <td>{d.name}</td>
-                    <td className="font-bold text-gradient">₹{d.revenue.toLocaleString('en-IN')}</td>
-                    <td className="font-bold" style={{ color: '#4ADE80' }}>₹{Math.round(d.margin).toLocaleString('en-IN')}</td>
+                    <td className="font-bold text-gradient">{globalConfig.currency}{d.revenue.toLocaleString('en-IN')}</td>
+                    <td className="font-bold" style={{ color: '#4ADE80' }}>{globalConfig.currency}{Math.round(d.margin).toLocaleString('en-IN')}</td>
                   </tr>
                 ))}
                 {reportType === 'production' && productionData.map(d => (
@@ -203,7 +203,7 @@ export default function Reports() {
                 {reportType === 'inventory' && inventoryData.map(d => (
                   <tr key={d.name}>
                     <td>{d.name}</td>
-                    <td className="font-bold text-gradient">₹{d.value.toLocaleString('en-IN')}</td>
+                    <td className="font-bold text-gradient">{globalConfig.currency}{d.value.toLocaleString('en-IN')}</td>
                   </tr>
                 ))}
               </tbody>

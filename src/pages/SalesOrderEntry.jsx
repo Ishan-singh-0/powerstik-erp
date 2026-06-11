@@ -6,9 +6,8 @@ import PromptModal from '../components/PromptModal';
 import './SalesOrderEntry.css';
 
 export default function SalesOrderEntry() {
-  const { submitSalesOrder } = useGlobalState();
+  const { loading, submitSalesOrder, globalConfig } = useGlobalState();
   const [masters, setMasters] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [isScanning, setIsScanning] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -130,7 +129,7 @@ export default function SalesOrderEntry() {
     setSalesRep('');
     setItems([{ id: Date.now(), category: '', productName: '', qty: 1, rate: 0, amount: 0 }]);
 
-    openConfirm(`✅ Sales Order submitted for ₹${calculateTotal()}! Invoice, Production Jobs & Artwork tasks auto-generated.`, () => {});
+    openConfirm(`✅ Sales Order submitted for ${globalConfig.currency}${calculateTotal()}! Invoice, Production Jobs & Artwork tasks auto-generated.`, () => {});
   };
 
   if (loading || !masters) {
@@ -358,7 +357,7 @@ export default function SalesOrderEntry() {
                         onChange={(e) => updateItem(item.id, 'rate', e.target.value)}
                       />
                     </td>
-                    <td className="font-bold text-gradient">₹{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                    <td className="font-bold text-gradient">{globalConfig.currency}{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                     <td>
                       <button className="icon-btn-danger" onClick={() => removeItem(item.id)}>
                         <Trash2 size={16} />
@@ -375,7 +374,7 @@ export default function SalesOrderEntry() {
         <div className="form-footer">
           <div className="total-display">
             <span className="text-muted">Total Amount:</span>
-            <span className="text-2xl font-bold text-gradient">₹{calculateTotal()}</span>
+            <span className="text-2xl font-bold text-gradient">{globalConfig.currency}{calculateTotal()}</span>
           </div>
         </div>
       </div>

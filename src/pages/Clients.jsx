@@ -5,7 +5,7 @@ import PromptModal from '../components/PromptModal';
 import './Dashboard.css';
 
 export default function Clients() {
-  const { clients, invoices, productionJobs, addClient, updateClient } = useGlobalState();
+  const { clients, invoices, productionJobs, addClient, updateClient, globalConfig } = useGlobalState();
   const [search, setSearch] = useState('');
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: 'prompt', title: '', defaultValue: '', onConfirm: null });
   const [editingClient, setEditingClient] = useState(null);
@@ -79,7 +79,7 @@ export default function Clients() {
           </div>
           <div className="glass-panel stat-card" style={{ padding: '1.5rem' }}>
             <h3 className="text-muted">Total CRM Revenue</h3>
-            <p className="font-bold text-2xl" style={{ color: '#4ADE80' }}>₹{totalCRMRevenue.toLocaleString('en-IN')}</p>
+            <p className="font-bold text-2xl" style={{ color: '#4ADE80' }}>{globalConfig.currency}{totalCRMRevenue.toLocaleString('en-IN')}</p>
           </div>
         </div>
 
@@ -131,7 +131,7 @@ export default function Clients() {
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <p className="text-muted" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Lifetime Revenue</p>
-                      <p className="font-bold" style={{ fontSize: '1.1rem', color: '#ffcb05' }}>₹{stats.totalRevenue.toLocaleString('en-IN')}</p>
+                      <p className="font-bold" style={{ fontSize: '1.1rem', color: '#ffcb05' }}>{globalConfig.currency}{stats.totalRevenue.toLocaleString('en-IN')}</p>
                     </div>
                   </div>
                 </div>

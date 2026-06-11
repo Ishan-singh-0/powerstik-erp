@@ -1,14 +1,27 @@
 import { useState } from 'react';
 import { useGlobalState } from '../context/GlobalState';
-import { UserPlus, Trash2, Key, Shield, Download, Upload, Database } from 'lucide-react';
+import { UserPlus, Trash2, Key, Shield, Download, Upload, Database, Settings } from 'lucide-react';
 import './Dashboard.css';
 
 export default function Admin() {
-  const { users, addUser, deleteUser, currentUser, exportDatabase, importDatabase } = useGlobalState();
+  const { users, addUser, deleteUser, currentUser, exportDatabase, importDatabase, globalConfig, updateGlobalConfig } = useGlobalState();
   const [newUserId, setNewUserId] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newName, setNewName] = useState('');
   const [newRole, setNewRole] = useState('production');
+
+  const [configForm, setConfigForm] = useState(globalConfig || {
+    currency: '₹',
+    taxRate: 18,
+    companyName: 'PowerStik India',
+    companyAddress: '123 Factory Lane, Industrial Area, Pune'
+  });
+
+  const handleSaveConfig = (e) => {
+    e.preventDefault();
+    updateGlobalConfig(configForm);
+    alert('Global Settings updated successfully!');
+  };
 
   if (currentUser?.role !== 'admin') {
     return (
@@ -230,6 +243,59 @@ export default function Admin() {
               <input type="file" accept=".json" onChange={handleRestore} style={{ display: 'none' }} />
             </label>
           </div>
+        </div>
+        {/* Global Settings Section */}
+        <div className="glass-panel" style={{ padding: '2rem', marginTop: '2rem' }}>
+          <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Settings size={20} className="text-gradient" /> Global ERP Configuration
+          </h3>
+          <p className="text-muted" style={{ marginBottom: '1.5rem' }}>
+            Update core application settings such as taxation rates, currency symbols, and master company details.
+          </p>
+          <form onSubmit={handleSaveConfig} className="grid-2" style={{ gap: '1rem' }}>
+            <div className="input-group-col">
+              <label>Company Name</label>
+              <input 
+                type="text" 
+                value={configForm.companyName}
+                onChange={(e) => setConfigForm({...configForm, companyName: e.target.value})}
+                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
+              />
+            </div>
+            <div className="input-group-col">
+              <label>Default Currency Symbol</label>
+              <input 
+                type="text" 
+                value={configForm.currency}
+                onChange={(e) => setConfigForm({...configForm, currency: e.target.value})}
+                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
+              />
+            </div>
+            <div className="input-group-col">
+              <label>GST / Tax Rate (%)</label>
+              <input 
+                type="number" 
+                step="0.1"
+                value={configForm.taxRate}
+                onChange={(e) => setConfigForm({...configForm, taxRate: Number(e.target.value)})}
+                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
+              />
+            </div>
+            <div className="input-group-col" style={{ gridColumn: 'span 2' }}>
+              <label>Company Address</label>
+              <input 
+                type="text" 
+                value={configForm.companyAddress}
+                onChange={(e) => setConfigForm({...configForm, companyAddress: e.target.value})}
+                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
+              />
+            </div>
+            <div style={{ gridColumn: 'span 2', marginTop: '0.5rem' }}>
+              <button type="submit" className="btn-primary">
+                Save Global Settings
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

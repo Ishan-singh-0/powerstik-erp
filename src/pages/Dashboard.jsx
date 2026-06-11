@@ -6,7 +6,7 @@ import PromptModal from '../components/PromptModal';
 import './Dashboard.css';
 
 export default function Dashboard() {
-  const { currentUser, productionJobs, inventory, invoices, activityLogs, updateProductionJob, logActivity } = useGlobalState();
+  const { currentUser, productionJobs, inventory, invoices, activityLogs, updateProductionJob, logActivity, globalConfig } = useGlobalState();
   const [selectedRoleView, setSelectedRoleView] = useState(currentUser?.role || 'employee');
 
   const activeJobs = productionJobs.filter(j => j.status === 'Running' || j.status === 'Queued');
@@ -30,11 +30,10 @@ export default function Dashboard() {
 
     const data = Object.keys(monthlyData).map(month => ({
       name: month,
-      Revenue: monthlyData[month]
+      revenue: monthlyData[month]
     }));
     
-    // Sort chronologically if needed, but for simplicity assuming sorted order or it's fine.
-    return data.length > 0 ? data : [{ name: 'No Data', Revenue: 0 }];
+    return data.length > 0 ? data : [{ name: 'No Data', revenue: 0 }];
   }, [invoices]);
 
   // My Tasks logic
@@ -111,18 +110,20 @@ export default function Dashboard() {
           <div className="stats-grid" style={{ marginBottom: '2rem' }}>
             <div className="glass-panel stat-card" style={{ padding: '1.5rem', borderTop: '3px solid #4ADE80' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 className="text-muted">Total Revenue Collected</h3>
-                <IndianRupee size={20} color="#4ADE80" />
+                <h3 className="text-muted" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <TrendingUp size={18} className="text-gradient" /> Total Revenue
+                </h3>
               </div>
-              <p className="font-bold text-2xl" style={{ color: '#4ADE80', marginTop: '0.5rem' }}>₹{totalRevenue.toLocaleString('en-IN')}</p>
+              <p className="font-bold text-2xl" style={{ color: '#4ADE80', marginTop: '0.5rem' }}>{globalConfig.currency}{totalRevenue.toLocaleString('en-IN')}</p>
             </div>
             
             <div className="glass-panel stat-card" style={{ padding: '1.5rem', borderTop: '3px solid #ffcb05' }}>
                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 className="text-muted">Pending Invoices</h3>
-                <TrendingUp size={20} color="#ffcb05" />
+                <h3 className="text-muted" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <IndianRupee size={18} color="#ffcb05" /> Pending Payments
+                </h3>
               </div>
-              <p className="font-bold text-2xl" style={{ color: '#ffcb05', marginTop: '0.5rem' }}>₹{totalPending.toLocaleString('en-IN')}</p>
+              <p className="font-bold text-2xl" style={{ color: '#ffcb05', marginTop: '0.5rem' }}>{globalConfig.currency}{totalPending.toLocaleString('en-IN')}</p>
             </div>
 
             <div className="glass-panel stat-card" style={{ padding: '1.5rem', borderTop: '3px solid var(--accent-primary)' }}>
@@ -143,28 +144,21 @@ export default function Dashboard() {
               <div style={{ height: '280px', width: '100%', marginTop: '1rem' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
-                    <XAxis 
-                      dataKey="name" 
-                      stroke="rgba(255,255,255,0.5)" 
-                      tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} 
-                      axisLine={false} 
-                      tickLine={false}
-                    />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                    <XAxis dataKey="name" stroke="#888" fontSize={12} tickLine={false} axisLine={false} />
                     <YAxis 
-                      stroke="rgba(255,255,255,0.5)" 
-                      tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} 
+                      stroke="#888" 
+                      fontSize={12} 
+                      tickLine={false} 
                       axisLine={false} 
-                      tickLine={false}
-                      tickFormatter={(value) => `₹${(value / 1000)}k`}
+                      tickFormatter={(value) => `${globalConfig.currency}${(value / 1000)}k`}
                     />
                     <Tooltip 
                       cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                      contentStyle={{ background: '#1e1e1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff' }}
-                      itemStyle={{ color: '#4ADE80', fontWeight: 'bold' }}
-                      formatter={(value) => [`₹${value.toLocaleString('en-IN')}`, 'Revenue']}
+                      contentStyle={{ background: '#1a1a1a', border: '1px solid #333', borderRadius: '8px', color: '#fff' }}
+                      formatter={(value) => [`${globalConfig.currency}${value.toLocaleString('en-IN')}`, 'Revenue']}
                     />
-                    <Bar dataKey="Revenue" fill="#4ADE80" radius={[4, 4, 0, 0]} maxBarSize={50} />
+                    <Bar dataKey="revenue" fill="#4ADE80" radius={[4, 4, 0, 0]} maxBarSize={50} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
