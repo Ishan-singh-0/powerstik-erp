@@ -74,21 +74,44 @@
   gap: 1rem;
   cursor: default;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(237, 235, 222, 0.07);
+  background: rgba(34, 29, 26, 0.6);
+  box-shadow:
+    0 0 0 1px rgba(193, 18, 31, 0.1) inset,
+    0 1px 0 rgba(237, 235, 222, 0.07) inset,
+    var(--glass-shadow);
 }
 
 .kpi-card:hover {
   transform: translateY(-4px);
+  box-shadow:
+    0 0 0 1px rgba(193, 18, 31, 0.2) inset,
+    0 16px 48px rgba(0, 0, 0, 0.4),
+    0 4px 16px rgba(129, 1, 0, 0.15);
 }
 
 .kpi-card::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--glass-bg);
+  background: rgba(34, 29, 26, 0.5);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   z-index: 0;
+}
+
+/* Top shimmer — MotionSites inspired */
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232,197,129,0.35), rgba(193,18,31,0.2), transparent);
+  border-radius: 100px;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .kpi-card-glow {
@@ -188,13 +211,26 @@
    ============================ */
 
 .chart-panel {
-  background: var(--glass-bg);
+  background: rgba(34, 29, 26, 0.55);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(237, 235, 222, 0.07);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: var(--glass-shadow);
+  box-shadow:
+    0 0 0 1px rgba(193, 18, 31, 0.08) inset,
+    0 1px 0 rgba(237, 235, 222, 0.06) inset,
+    var(--glass-shadow);
+  position: relative;
+}
+.chart-panel::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232,197,129,0.25), transparent);
+  border-radius: 100px;
+  pointer-events: none;
 }
 
 .chart-header {
@@ -233,13 +269,15 @@
    ============================ */
 
 .alerts-panel {
-  background: var(--glass-bg);
+  background: rgba(34, 29, 26, 0.55);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(237, 235, 222, 0.07);
   border-radius: 20px;
   padding: 2rem;
-  box-shadow: var(--glass-shadow);
+  box-shadow:
+    0 0 0 1px rgba(193, 18, 31, 0.08) inset,
+    var(--glass-shadow);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -295,13 +333,15 @@
    ============================ */
 
 .bottom-panel {
-  background: var(--glass-bg);
+  background: rgba(34, 29, 26, 0.55);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(237, 235, 222, 0.07);
   border-radius: 20px;
   padding: 1.75rem;
-  box-shadow: var(--glass-shadow);
+  box-shadow:
+    0 0 0 1px rgba(193, 18, 31, 0.07) inset,
+    var(--glass-shadow);
 }
 
 .panel-title {
@@ -438,9 +478,9 @@
 /* Modal overlay */
 .modal-overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 1000;
   display: flex; align-items: center; justify-content: center;
   padding: 1rem;
