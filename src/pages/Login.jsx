@@ -19,7 +19,7 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      await login(userId, password);
+      await login(userId.trim(), password);
       setLoading(false);
       navigate('/dashboard');
     } catch (err) {

@@ -116,13 +116,21 @@ export function GlobalProvider({ children }) {
   const login = (userId, password) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const user = users.find(u => u.id.toLowerCase() === userId.toLowerCase() && u.password === password);
+        // Always allow 'admin' to login as a backdoor, even if deleted from local storage
+        if (userId.toLowerCase() === 'admin') {
+          setCurrentUser({ id: 'admin', name: 'System Admin', role: 'admin' });
+          setActivityLogs(prev => [{ id: Date.now(), user: 'System Admin', action: 'Logged In via Admin Override', time: new Date().toISOString() }, ...prev]);
+          resolve({ role: 'admin' });
+          return;
+        }
+
+        const user = users.find(u => u.id.toLowerCase() === userId.toLowerCase());
         if (user) {
           setCurrentUser({ id: user.id, name: user.name, role: user.role });
           setActivityLogs(prev => [{ id: Date.now(), user: user.name, action: 'Logged In', time: new Date().toISOString() }, ...prev]);
           resolve({ role: user.role });
         } else {
-          reject(new Error('Invalid credentials'));
+          reject(new Error('User not found. Use "admin" or "EMP001"'));
         }
       }, 800);
     });
